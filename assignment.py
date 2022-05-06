@@ -21,6 +21,7 @@ from threading import Thread
 import subprocess
 
 # Threading to run two files in parallel
+# https://stackoverflow.com/questions/60001867
 t1 = Thread(target=subprocess.run, args=(["python", "webcam.py"],))
 t2 = Thread(target=subprocess.run, args=(["python", "interface.py"],))
 

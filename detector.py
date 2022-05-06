@@ -54,6 +54,7 @@ def addFace():
         fileNum2 = fileNum1
 
 
+# https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
     addFace()
 
