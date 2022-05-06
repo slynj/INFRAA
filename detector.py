@@ -3,12 +3,23 @@ import cv2
 import numpy as np
 import os
 
+global fileNum2, encodedImg
+
+# Set default webcam
 video_capture = cv2.VideoCapture(1)
+
+# Initialize some variables
+fileNum2 = 0
+encodedImg = []
 
 # Create arrays of known face encodings and their names
 known_face_encodings = []
-
 known_face_names = []
+
+face_locations = []
+face_encodings = []
+face_names = []
+process_this_frame = True
 
 
 # Adds a new face and name
@@ -18,11 +29,6 @@ def newFace(imgFile, faceName):
 
     known_face_encodings.append(faceEncoding)
     known_face_names.append(faceName)
-
-
-global fileNum2, encodedImg
-fileNum2 = 0
-encodedImg = []
 
 
 # Counts the number of files in the img directory to see if there are any new students added
@@ -47,11 +53,6 @@ def addFace():
 
         fileNum2 = fileNum1
 
-# Initialize some variables
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
 
 while True:
     addFace()
@@ -87,7 +88,6 @@ while True:
 
     process_this_frame = not process_this_frame
 
-
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
@@ -97,10 +97,10 @@ while True:
         left *= 4
 
         # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 0), 2)
 
         # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 0), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
