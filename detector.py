@@ -1,7 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
-
+import os
 
 video_capture = cv2.VideoCapture(1)
 
@@ -10,9 +10,42 @@ known_face_encodings = []
 
 known_face_names = []
 
+
+# Adds a new face and name
+def newFace(imgFile, faceName):
+    image = face_recognition.load_image_file(f"img/{imgFile}")
+    faceEncoding = face_recognition.face_encodings(image)[0]
+
+    known_face_encodings.append(faceEncoding)
+    known_face_names.append(faceName)
+
+
 global fileNum2, encodedImg
 fileNum2 = 0
 encodedImg = []
+
+
+# Counts the number of files in the img directory to see if there are any new students added
+def addFace():
+    global fileNum2, encodedImg
+
+    # ignore
+    if os.path.exists("img/.DS_Store"):
+        os.remove("img/.DS_Store")
+
+    fileNum1 = len(os.listdir('img/'))
+
+    if fileNum1 != fileNum2:
+        imgList = os.listdir('img/')
+        for i in range(fileNum1):
+            if imgList[i] not in encodedImg:
+                base = os.path.basename(f'img/{imgList[i]}')
+                imgName = os.path.splitext(base)[0]
+
+                encodedImg.append(imgList[i])
+                newFace(imgList[i].replace("'", ""), imgName)
+
+        fileNum2 = fileNum1
 
 # Initialize some variables
 face_locations = []
@@ -21,6 +54,7 @@ face_names = []
 process_this_frame = True
 
 while True:
+    addFace()
 
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -52,6 +86,7 @@ while True:
             face_names.append(name)
 
     process_this_frame = not process_this_frame
+
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
