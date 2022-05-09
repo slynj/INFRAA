@@ -19,7 +19,6 @@
 # -----------------------------------------------------------------------------
 from threading import Thread
 import subprocess
-import os
 
 # print('path:', os.getcwd())
 # print(subprocess.check_output('python --version', shell=True).decode('utf-8'))
