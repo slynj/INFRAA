@@ -19,11 +19,17 @@
 # -----------------------------------------------------------------------------
 from threading import Thread
 import subprocess
+import os
+
+# print('path:', os.getcwd())
+# print(subprocess.check_output('python --version', shell=True).decode('utf-8'))
+# print(subprocess.check_output('pip3 list', shell=True).decode('utf-8'))
+
 
 # Threading to run two files in parallel
 # https://stackoverflow.com/questions/60001867
-t1 = Thread(target=subprocess.run, args=(["python", "detector.py"],))
-t2 = Thread(target=subprocess.run, args=(["python", "interface.py"],))
+t1 = Thread(target=subprocess.call, args=(["python3", "detector.py"],))
+t2 = Thread(target=subprocess.call, args=(["python3", "interface.py"],))
 
 t1.start()
 t2.start()
