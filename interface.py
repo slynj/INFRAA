@@ -12,8 +12,10 @@ def fileCheck():
     path = fd.askopenfilename(initialdir="/", title="Select file", filetypes=(("jpeg files", "*.jpeg"),
                                                                               ("png files", "*.png"),
                                                                               ("jpg files", "*.jpg")))
-    print(path)
-    shutil.copy(path, dstPath)
+    try:
+        shutil.copy(path, dstPath)
+    except Exception as e:
+        print(f'Something went wrong: {e}')
 
 
 def distFromPoints(point1, point2):
@@ -147,12 +149,13 @@ def main():
     root.withdraw()
 
     pygame.init()  # Prepare the pygame module for use
-    surfaceSize = 480  # Desired physical surface size, in pixels.
+    surfaceSizeX = 1200  # Desired physical surface size, in pixels.
+    surfaceSizeY = 800  # Desired physical surface size, in pixels.
 
     clock = pygame.time.Clock()  # Force frame rate to be slower
 
     # Create surface of (width, height), and its window.
-    mainSurface = pygame.display.set_mode((surfaceSize, surfaceSize))
+    mainSurface = pygame.display.set_mode((surfaceSizeX, surfaceSizeY))
 
     # Create the the size, position and color for a circle
     circlePos = [200, 200]
@@ -163,6 +166,7 @@ def main():
     buttonOn = False  # Default to off
 
     while True:
+        global fileList
         mousePos = pygame.mouse.get_pos()
 
         if distFromPoints(circlePos, mousePos) < circleSize:
@@ -190,17 +194,22 @@ def main():
             fileList = f.readlines()  # Read the file into a list
             f.close()  # Close the file
 
-            for i in range(0, len(fileList)):
-                fileList[i] = fileList[i].strip()
+            # for i in range(0, len(fileList)):
+            #     fileList[i] = fileList[i].strip()
 
-            print(fileList)
-
+            #print(fileList)
         else:
             pass
 
         mainSurface.fill((255, 255, 255))
 
         pygame.draw.circle(mainSurface, circleColor, circlePos, circleSize)
+
+        for i in range(0, len(fileList)):
+            fileList[i] = fileList[i].strip()
+            nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
+            mainSurface.blit(nameTime, (100, 100+i*100))
+
 
         pygame.display.flip()
 
