@@ -205,11 +205,11 @@ def main():
 
         pygame.draw.circle(mainSurface, circleColor, circlePos, circleSize)
 
+        # removes \n from the text, rends the text, blit the text: 100 each
         for i in range(0, len(fileList)):
             fileList[i] = fileList[i].strip()
             nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
             mainSurface.blit(nameTime, (100, 100+i*100))
-
 
         pygame.display.flip()
 
