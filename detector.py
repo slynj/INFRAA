@@ -96,9 +96,14 @@ while True:
 
             face_names.append(name)
 
+            timeRecord = name + ' ' + str(currentTime()) + '\n'
 
+            if not os.path.exists('data/time.txt'):
+                open('data/time.txt', 'x')
 
-            print(name + ' ' + str(datetime.combine(today, current_time)))
+            file = open('data/time.txt', 'a')
+            file.write(timeRecord)
+            file.close()
 
     process_this_frame = not process_this_frame
 
