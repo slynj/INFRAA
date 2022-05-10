@@ -2,6 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 import os
+from datetime import date, time, datetime
 
 global fileNum2, encodedImg
 
@@ -54,6 +55,14 @@ def addFace():
         fileNum2 = fileNum1
 
 
+def currentTime():
+    """ Return the current time in YYYY-MM-DD HH:MM:SS format """
+    today = date.today()
+    now = datetime.now()
+    current_time = time(now.hour, now.minute, now.second)
+    return datetime.combine(today, current_time)
+
+
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
     addFace()
@@ -86,6 +95,10 @@ while True:
                 name = known_face_names[best_match_index]
 
             face_names.append(name)
+
+
+
+            print(name + ' ' + str(datetime.combine(today, current_time)))
 
     process_this_frame = not process_this_frame
 
