@@ -63,9 +63,44 @@ def currentTime():
     return datetime.combine(today, current_time)
 
 
+currentFaces = []
+global initial
+initial = True
+
+def currentFace():
+    global initial
+
+    if initial:
+        initial = False
+        for i in range(len(known_face_names)):
+            currentFaces.append([known_face_names[i]])
+
+    # for i in range(len(known_face_names)):
+    #     if known_face_names[i] != currentFaces[i][0]:
+    #         print("jjsdkjf;alksdj;flaksj")
+    #         currentFaces[i][0].append(known_face_names[i])
+    print(len(known_face_names))
+    print(len(currentFaces))
+    print(currentFaces[1][0])
+    if len(known_face_names) != len(currentFaces):
+        index = len(currentFaces)
+        for i in range(index):
+            if known_face_names[i] != currentFaces[i][0]:
+                print("j")
+                currentFaces[i][0].append(known_face_names[i])
+                if index != len(known_face_names):
+                    index += 1
+    print(currentFaces)
+    # if fileNum1 != fileNum2:
+    #     imgList = os.listdir('img/')
+    #     for i in range(fileNum1):
+    #         if imgList[i] not in encodedImg:
+
+
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
     addFace()
+    currentFace()
 
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -88,11 +123,15 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
 
-            # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+            if True in matches:
+                first_match_index = matches.index(True)
+                name = known_face_names[first_match_index]
+
+            # # Or instead, use the known face with the smallest distance to the new face
+            # face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            # best_match_index = np.argmin(face_distances)
+            # if matches[best_match_index]:
+            #     name = known_face_names[best_match_index]
 
             face_names.append(name)
 
