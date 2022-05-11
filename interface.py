@@ -164,9 +164,14 @@ def main():
 
     # Create a variable to save the button state
     buttonOn = False  # Default to off
+    pageNum = 0
+    yVal = 100
+    nextPage = 0
 
     while True:
         global fileList
+        mainSurface.fill((255, 255, 255))
+
         mousePos = pygame.mouse.get_pos()
 
         if distFromPoints(circlePos, mousePos) < circleSize:
@@ -181,9 +186,12 @@ def main():
         if ev.type == pygame.QUIT:
             break
         if ev.type == pygame.MOUSEBUTTONUP:
+            mouseUp = True
             if hover:
                 circleColor = (255, 0, 0)
                 buttonOn = True
+        else:
+            mouseUp = False
 
         if buttonOn:
             buttonOn = False
@@ -194,6 +202,11 @@ def main():
             fileList = f.readlines()  # Read the file into a list
             f.close()  # Close the file
 
+            for i in range(0, len(fileList)):
+                fileList[i] = fileList[i].strip()
+                nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
+                mainSurface.blit(nameTime, (100, 100 + 100 * i))
+
             # for i in range(0, len(fileList)):
             #     fileList[i] = fileList[i].strip()
 
@@ -201,15 +214,14 @@ def main():
         else:
             pass
 
-        mainSurface.fill((255, 255, 255))
+        if mouseUp:
+            nextPage += 1
+
+
 
         pygame.draw.circle(mainSurface, circleColor, circlePos, circleSize)
 
         # removes \n from the text, rends the text, blit the text: 100 each
-        for i in range(0, len(fileList)):
-            fileList[i] = fileList[i].strip()
-            nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
-            mainSurface.blit(nameTime, (100, 100+i*100))
 
         pygame.display.flip()
 
