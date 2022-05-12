@@ -2,7 +2,8 @@ import face_recognition
 import cv2
 import numpy as np
 import os
-from datetime import date, time, datetime
+from datetime import date, time, datetime, timedelta
+
 
 global fileNum2, encodedImg, face_names
 
@@ -76,6 +77,7 @@ def currentFace():
         for i in range(len(known_face_names)):
             currentFaces.append([known_face_names[i]])
             currentFaces[i].append('False')
+            currentFaces[i].append(currentTime())
 
     if len(known_face_names) != len(currentFaces):
         currentFaces.append([known_face_names[-1]])
@@ -83,7 +85,6 @@ def currentFace():
 
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
-    print(face_names)
     addFace()
     currentFace()
 
@@ -126,11 +127,22 @@ while True:
                 open('data/time.txt', 'x')
 
             for i in range(len(currentFaces)):
-                
+                presence = currentFaces[i][1]
+                timeStored = currentFaces[i][2]
 
-            file = open('data/time.txt', 'a')
-            file.write(timeRecord)
-            file.close()
+                if currentFaces[i][0] == name:
+                    if str(currentTime() - timeStored) > "0:00:05":
+                        timeStored = currentTime()
+                        if presence == 'True':
+                            presence = 'False'
+                        elif presence == 'False':
+                            presence = 'True'
+                print(str(currentTime() - timeStored))
+
+
+                        # file = open('data/time.txt', 'a')
+                        # file.write(timeRecord)
+                        # file.close()
 
     process_this_frame = not process_this_frame
 
