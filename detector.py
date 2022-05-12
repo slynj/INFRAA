@@ -4,7 +4,7 @@ import numpy as np
 import os
 from datetime import date, time, datetime
 
-global fileNum2, encodedImg
+global fileNum2, encodedImg, face_names
 
 # Set default webcam
 video_capture = cv2.VideoCapture(1)
@@ -63,42 +63,27 @@ def currentTime():
     return datetime.combine(today, current_time)
 
 
-currentFaces = []
-global initial
+global initial, currentFaces
 initial = True
+currentFaces = []
+
 
 def currentFace():
-    global initial
+    global initial, currentFaces
 
     if initial:
         initial = False
         for i in range(len(known_face_names)):
             currentFaces.append([known_face_names[i]])
+            currentFaces[i].append('False')
 
-    # for i in range(len(known_face_names)):
-    #     if known_face_names[i] != currentFaces[i][0]:
-    #         print("jjsdkjf;alksdj;flaksj")
-    #         currentFaces[i][0].append(known_face_names[i])
-    print(len(known_face_names))
-    print(len(currentFaces))
-    print(currentFaces[1][0])
     if len(known_face_names) != len(currentFaces):
-        index = len(currentFaces)
-        for i in range(index):
-            if known_face_names[i] != currentFaces[i][0]:
-                print("j")
-                currentFaces[i][0].append(known_face_names[i])
-                if index != len(known_face_names):
-                    index += 1
-    print(currentFaces)
-    # if fileNum1 != fileNum2:
-    #     imgList = os.listdir('img/')
-    #     for i in range(fileNum1):
-    #         if imgList[i] not in encodedImg:
+        currentFaces.append([known_face_names[-1]])
 
 
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
+    print(face_names)
     addFace()
     currentFace()
 
@@ -139,6 +124,9 @@ while True:
 
             if not os.path.exists('data/time.txt'):
                 open('data/time.txt', 'x')
+
+            for i in range(len(currentFaces)):
+                
 
             file = open('data/time.txt', 'a')
             file.write(timeRecord)
