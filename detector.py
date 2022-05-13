@@ -83,6 +83,11 @@ def currentFace():
         currentFaces.append([known_face_names[-1]])
 
 
+def dataFileExist():
+    if not os.path.exists('data/time.txt'):
+        open('data/time.txt', 'x')
+
+        
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
     addFace()
@@ -123,22 +128,23 @@ while True:
 
             timeRecord = name + ' ' + str(currentTime()) + '\n'
 
-            if not os.path.exists('data/time.txt'):
-                open('data/time.txt', 'x')
+            dataFileExist()
 
             for i in range(len(currentFaces)):
-                presence = currentFaces[i][1]
-                timeStored = currentFaces[i][2]
 
                 if currentFaces[i][0] == name:
-                    if str(currentTime() - timeStored) > "0:00:05":
-                        timeStored = currentTime()
-                        if presence == 'True':
-                            presence = 'False'
-                        elif presence == 'False':
-                            presence = 'True'
-                print(str(currentTime() - timeStored))
+                    presence = currentFaces[i][1]
+                    timeStored = currentFaces[i][2]
 
+                    duration = currentTime() - currentFaces[i][2]
+                    duration_in_s = duration.total_seconds()
+
+                    if duration_in_s > 5:
+                        currentFaces[i][2] = currentTime()
+                        if presence == 'True':
+                            currentFaces[i][1] = 'False'
+                        elif presence == 'False':
+                            currentFaces[i][1] = 'True'
 
                         # file = open('data/time.txt', 'a')
                         # file.write(timeRecord)
