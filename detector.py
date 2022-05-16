@@ -74,10 +74,23 @@ def currentFace():
 
     if initial:
         initial = False
+        dataFileExist('time')
+
         for i in range(len(known_face_names)):
             currentFaces.append([known_face_names[i]])
             currentFaces[i].append('False')
             currentFaces[i].append(currentTime())
+
+        for j in range(len(currentFaces)):
+            nameStored = currentFaces[j][0]
+            presenceStored = currentFaces[j][1]
+            timeStored = currentFaces[j][2]
+
+            record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
+
+            file = open('data/time.txt', 'a')
+            file.write(record)
+            file.close()
 
     if len(known_face_names) != len(currentFaces):
         currentFaces.append([known_face_names[-1]])
@@ -157,16 +170,15 @@ while True:
 
                         lineNum = 0
                         file = open("data/time.txt", "r")
-                        print(name)
 
                         for line in file.readlines():
                             lineNum += 1
                             if line.find(name) >= 0:
-
-                                print(lineNum)
+                                print("UPDATE")
                                 recurringName = True
                                 break
 
+                        # Update the previous information if it is a recurring name
                         if recurringName:
                             file = open('data/time.txt', 'r')
                             data = file.readlines()
@@ -176,8 +188,10 @@ while True:
                             file = open('data/time.txt', 'w')
                             file.writelines(data)
                             file.close()
+
+                        # Add new lines if its not a recurring name
                         elif not recurringName:
-                            print("lsdjflaksjf;laskjf")
+                            print("NEW")
                             file = open('data/time.txt', 'a')
                             file.write(record)
                             file.close()
