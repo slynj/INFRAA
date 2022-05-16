@@ -83,11 +83,11 @@ def currentFace():
         currentFaces.append([known_face_names[-1]])
 
 
-def dataFileExist():
-    if not os.path.exists('data/time.txt'):
-        open('data/time.txt', 'x')
+def dataFileExist(fileName):
+    if not os.path.exists(f'data/{fileName}.txt'):
+        open(f'data/{fileName}.txt', 'x')
 
-        
+
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
     addFace()
@@ -126,29 +126,61 @@ while True:
 
             face_names.append(name)
 
-            timeRecord = name + ' ' + str(currentTime()) + '\n'
-
-            dataFileExist()
+            dataFileExist('time')
+            print(currentFaces)
 
             for i in range(len(currentFaces)):
 
                 if currentFaces[i][0] == name:
-                    presence = currentFaces[i][1]
+                    nameStored = currentFaces[i][1]
+                    presenceStored = currentFaces[i][1]
                     timeStored = currentFaces[i][2]
 
-                    duration = currentTime() - currentFaces[i][2]
+                    duration = currentTime() - timeStored
                     duration_in_s = duration.total_seconds()
 
                     if duration_in_s > 5:
+                        recurringName = False
+
                         currentFaces[i][2] = currentTime()
-                        if presence == 'True':
+                        if presenceStored == 'True':
                             currentFaces[i][1] = 'False'
-                        elif presence == 'False':
+                        elif presenceStored == 'False':
                             currentFaces[i][1] = 'True'
 
-                        # file = open('data/time.txt', 'a')
-                        # file.write(timeRecord)
-                        # file.close()
+                        # Update variable values
+                        nameStored = currentFaces[i][0]
+                        presenceStored = currentFaces[i][1]
+                        timeStored = currentFaces[i][2]
+
+                        record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
+
+                        lineNum = 0
+                        file = open("data/time.txt", "r")
+                        print(name)
+
+                        for line in file.readlines():
+                            lineNum += 1
+                            if line.find(name) >= 0:
+
+                                print(lineNum)
+                                recurringName = True
+                                break
+
+                        if recurringName:
+                            file = open('data/time.txt', 'r')
+                            data = file.readlines()
+                            data[lineNum] = presenceStored + '\n'
+                            data[lineNum+1] = str(timeStored) + '\n'
+
+                            file = open('data/time.txt', 'w')
+                            file.writelines(data)
+                            file.close()
+                        elif not recurringName:
+                            print("lsdjflaksjf;laskjf")
+                            file = open('data/time.txt', 'a')
+                            file.write(record)
+                            file.close()
 
     process_this_frame = not process_this_frame
 
