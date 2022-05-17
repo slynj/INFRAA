@@ -144,18 +144,32 @@ def horizontalC(item, mainSurface):
 
 
 def main():
-    """ Set up the game and run the main game loop """
+    # -----------------------------Setup------------------------------------------------- #
+    global fileList, programState, YELLOW, NAVY
+
+    # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
     root = tk.Tk()
     root.withdraw()
+    if root.wm_state() == 'withdrawn':
+        root.iconify()
 
-    pygame.init()  # Prepare the pygame module for use
-    surfaceSizeX = 1200  # Desired physical surface size, in pixels.
-    surfaceSizeY = 800  # Desired physical surface size, in pixels.
+    pygame.init()
 
-    clock = pygame.time.Clock()  # Force frame rate to be slower
+    pygame.display.set_caption("INFRAA")
 
-    # Create surface of (width, height), and its window.
+    # -----------------------------Program Variable Initialization----------------------- #
+    surfaceSizeX = 1200
+    surfaceSizeY = 800
+
+    clock = pygame.time.Clock()
+
     mainSurface = pygame.display.set_mode((surfaceSizeX, surfaceSizeY))
+
+    YELLOW = (253, 186, 33)  # FDBA21
+    NAVY = (20, 61, 89)  # 143D59
+    WHITE = (255, 255, 255)
+
+    programState = "main"
 
     # Create the the size, position and color for a circle
     circlePos = [200, 200]
@@ -168,10 +182,11 @@ def main():
     yVal = 100
     nextPage = 0
 
-    while True:
-        global fileList
-        mainSurface.fill((255, 255, 255))
+    # -----------------------------Main Game Loop---------------------------------------- #
 
+    while True:
+        # -----------------------------Event Handling------------------------------------ #
+        # change order, make hover function
         mousePos = pygame.mouse.get_pos()
 
         if distFromPoints(circlePos, mousePos) < circleSize:
@@ -197,31 +212,39 @@ def main():
             buttonOn = False
             fileCheck()
 
+        # ----------------------------- Game Logic / Drawing -------------------------------- #
+
+        # Background
+        mainSurface.fill((242, 244, 249))
+        # Header
+        pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
+
+        '''
+        pygame.draw.circle(mainSurface, YELLOW, (100, 100), 50)
+        pygame.draw.circle(mainSurface, NAVY, (200, 100), 50)
+        pygame.draw.circle(mainSurface, (227, 227, 227), (300, 100), 50)
+        pygame.draw.circle(mainSurface, (255, 255, 255), (400, 100), 50)
+        '''
+
+        '''
         if os.path.exists('data/time.txt'):
             f = open("data/time.txt", "r")  # Open the file
             fileList = f.readlines()  # Read the file into a list
             f.close()  # Close the file
 
+            # removes \n from the text, rends the text, blit the text: 100 each
             for i in range(0, len(fileList)):
                 fileList[i] = fileList[i].strip()
                 nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
                 mainSurface.blit(nameTime, (100, 100 + 100 * i))
-
-            # for i in range(0, len(fileList)):
-            #     fileList[i] = fileList[i].strip()
-
-            #print(fileList)
         else:
             pass
 
         if mouseUp:
             nextPage += 1
 
-
-
         pygame.draw.circle(mainSurface, circleColor, circlePos, circleSize)
-
-        # removes \n from the text, rends the text, blit the text: 100 each
+        '''
 
         pygame.display.flip()
 
