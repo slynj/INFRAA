@@ -74,23 +74,24 @@ def currentFace():
 
     if initial:
         initial = False
-        dataFileExist('time')
 
         for i in range(len(known_face_names)):
             currentFaces.append([known_face_names[i]])
             currentFaces[i].append('False')
             currentFaces[i].append(currentTime())
 
-        for j in range(len(currentFaces)):
-            nameStored = currentFaces[j][0]
-            presenceStored = currentFaces[j][1]
-            timeStored = currentFaces[j][2]
+        if not os.path.exists('data/time.txt'):
+            dataFileExist('time')
+            for j in range(len(currentFaces)):
+                nameStored = currentFaces[j][0]
+                presenceStored = currentFaces[j][1]
+                timeStored = currentFaces[j][2]
 
-            record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
+                record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
 
-            file = open('data/time.txt', 'a')
-            file.write(record)
-            file.close()
+                file = open('data/time.txt', 'a')
+                file.write(record)
+                file.close()
 
     if len(known_face_names) != len(currentFaces):
         currentFaces.append([known_face_names[-1]])
