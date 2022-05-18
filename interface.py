@@ -159,7 +159,7 @@ def main():
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
 
-    programState = "main"
+    programState = "MAIN"
 
     # Create the the size, position and color for a circle
     circlePos = [200, 200]
@@ -230,27 +230,32 @@ def main():
         # Logo Hover
         if hoverObject(mousePos, logoInit, 5, 5):
             logoInit = logoHoverImg
+            if mouseUp:
+                programState = 'MAIN'
         else:
             logoInit = logoImg
 
         # Menu Text Hover
         if hoverObject(mousePos, menuLogText, 350, 10):
             menuLogText = font('Log', c=NAVY)
-            #if mouseUp:
-
+            if mouseUp:
+                programState = 'LOG'
         else:
             menuLogText = font('Log', c=BLUE)
 
         if hoverObject(mousePos, menuAttendanceText, 550, 10):
             menuAttendanceText = font('Attendance', c=NAVY)
+            if mouseUp:
+                programState = 'ATTENDANCE'
         else:
             menuAttendanceText = font('Attendance', c=BLUE)
 
         if hoverObject(mousePos, menuClassText, 900, 10):
             menuClassText = font('Class', c=NAVY)
+            if mouseUp:
+                programState = 'CLASS'
         else:
             menuClassText = font('Class', c=BLUE)
-
 
 
         '''
