@@ -110,13 +110,21 @@ def font(t, f="tommy.otf", s=40, c=(58, 101, 139)):
     return renderedText
 
 
-# Collision Detection for Rectangles (shapes & images)
-def bttnDimension(mouse, text, textX, textY):
-    paddingW = text.get_width() * 0.3
-    paddingH = text.get_height() * 0.1
-    dimension = [textX - paddingW / 2, textY - paddingH / 2, text.get_width() + paddingW, text.get_height() + paddingH]
-    bttn = pygame.Rect(dimension)
-    if bttn.collidepoint(mouse[0], mouse[1]):
+# Collision Detection for Rectangles (shapes, images, texts)
+def hoverObject(mouse, objects, objectX, objectY):
+    paddingW = objects.get_width() * 0.3
+    paddingH = objects.get_height() * 0.1
+    dimension = [objectX - paddingW / 2, objectY - paddingH / 2,
+                 objects.get_width() + paddingW, objects.get_height() + paddingH]
+    area = pygame.Rect(dimension)
+    if area.collidepoint(mouse[0], mouse[1]):
+        return True
+    else:
+        return False
+
+
+def clickObject(objects, mouseUp):
+    if hoverObject(objects) and mouseUp:
         return True
     else:
         return False
@@ -144,6 +152,7 @@ def main():
 
     mainSurface = pygame.display.set_mode((surfaceSizeX, surfaceSizeY))
 
+    # Colour Constants
     YELLOW = (253, 186, 33)  # FDBA21
     BLUE = (58, 101, 139)
     NAVY = (20, 61, 89)  # 143D59
@@ -166,9 +175,13 @@ def main():
     # Images Init
     logoImg = resizeImg('logo.jpg', 4)
     logoHoverImg = resizeImg('logoHover.jpg', 4)
+    logoInit = logoImg
 
     # Texts Init
-    test = font('test')
+    # Menu Header Texts
+    menuLogText = font('Log')
+    menuAttendanceText = font('Attendance')
+    menuClassText = font('Class')
 
     # -----------------------------Main Game Loop---------------------------------------- #
 
@@ -202,15 +215,43 @@ def main():
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
+        # —ESSENTIAL GRAPHICS— #
         # Background
         mainSurface.fill((242, 244, 249))
         # Header
         pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
         # Logo
-        mainSurface.blit(logoImg, (0, 0))
+        mainSurface.blit(logoInit, (5, 5))
+        # Menu Text
+        mainSurface.blit(menuLogText, (350, 10))
+        mainSurface.blit(menuAttendanceText, (550, 10))
+        mainSurface.blit(menuClassText, (900, 10))
+
+        # Logo Hover
+        if hoverObject(mousePos, logoInit, 5, 5):
+            logoInit = logoHoverImg
+        else:
+            logoInit = logoImg
+
+        # Menu Text Hover
+        if hoverObject(mousePos, menuLogText, 350, 10):
+            menuLogText = font('Log', c=NAVY)
+            #if mouseUp:
+
+        else:
+            menuLogText = font('Log', c=BLUE)
+
+        if hoverObject(mousePos, menuAttendanceText, 550, 10):
+            menuAttendanceText = font('Attendance', c=NAVY)
+        else:
+            menuAttendanceText = font('Attendance', c=BLUE)
+
+        if hoverObject(mousePos, menuClassText, 900, 10):
+            menuClassText = font('Class', c=NAVY)
+        else:
+            menuClassText = font('Class', c=BLUE)
 
 
-        mainSurface.blit(test, (100, 100))
 
         '''
         pygame.draw.circle(mainSurface, YELLOW, (100, 100), 50)
