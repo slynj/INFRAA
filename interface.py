@@ -78,53 +78,6 @@ def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
     mainSurface.blit(text, (textX, textY))
 
 
-def bttnDimension(mouse, text, textX, textY):
-    '''
-    Collision detection for the button, returns TRUE or FALSE
-    Parameters
-    ----------
-    mouse: tuple
-        XY coordinates of the mouse pointer
-    text: pygame.Surface
-        the rendered text of the button
-    textX: float
-        the X coordinate of the button
-    textY: float
-        the Y coordinate of the button
-    Returns
-    -------
-    bool
-        if the mouse is touching the button or not
-    '''
-    paddingW = text.get_width() * 0.3
-    paddingH = text.get_height() * 0.1
-    dimension = [textX - paddingW / 2, textY - paddingH / 2, text.get_width() + paddingW, text.get_height() + paddingH]
-    bttn = pygame.Rect(dimension)
-    if bttn.collidepoint(mouse[0], mouse[1]):
-        return True
-    else:
-        return False
-
-
-def displayImg(mainSurface, imgFile, x, y):
-    '''
-    Draws the image on the given coordinates
-    Parameters
-    ----------
-    mainSurface: pygame.Surface
-        the surface to draw the elements
-    imgFile: pygame.Surface
-        the loaded image to be drawn
-    x: float
-        x coordinate of the image to be drawn
-    y: float
-        y coordinate of the image to be drawn
-    Returns
-    -------
-    None
-    '''
-    mainSurface.blit(imgFile, (x, y))
-
 
 def horizontalC(item, mainSurface):
     '''
@@ -141,6 +94,32 @@ def horizontalC(item, mainSurface):
         the x coordinate where the element would be centered
     '''
     return int((mainSurface.get_width() - item.get_width()) // 2)
+
+
+# Resizes Images
+def resizeImg(file, factor):
+    resizedImg = pygame.image.load(f'resource/{file}').convert_alpha()
+    resizedImg = pygame.transform.smoothscale\
+        (resizedImg, (resizedImg.get_width() / factor, resizedImg.get_height() / factor))
+    return resizedImg
+
+
+def font(t, f="tommy.otf", s=40, c=(58, 101, 139)):
+    text = pygame.font.Font(f'resource/{f}', s)
+    renderedText = text.render(t, True, c)
+    return renderedText
+
+
+# Collision Detection for Rectangles (shapes & images)
+def bttnDimension(mouse, text, textX, textY):
+    paddingW = text.get_width() * 0.3
+    paddingH = text.get_height() * 0.1
+    dimension = [textX - paddingW / 2, textY - paddingH / 2, text.get_width() + paddingW, text.get_height() + paddingH]
+    bttn = pygame.Rect(dimension)
+    if bttn.collidepoint(mouse[0], mouse[1]):
+        return True
+    else:
+        return False
 
 
 def main():
@@ -166,8 +145,10 @@ def main():
     mainSurface = pygame.display.set_mode((surfaceSizeX, surfaceSizeY))
 
     YELLOW = (253, 186, 33)  # FDBA21
+    BLUE = (58, 101, 139)
     NAVY = (20, 61, 89)  # 143D59
     WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
 
     programState = "main"
 
@@ -181,6 +162,13 @@ def main():
     pageNum = 0
     yVal = 100
     nextPage = 0
+
+    # Images Init
+    logoImg = resizeImg('logo.jpg', 4)
+    logoHoverImg = resizeImg('logoHover.jpg', 4)
+
+    # Texts Init
+    test = font('test')
 
     # -----------------------------Main Game Loop---------------------------------------- #
 
@@ -218,6 +206,11 @@ def main():
         mainSurface.fill((242, 244, 249))
         # Header
         pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
+        # Logo
+        mainSurface.blit(logoImg, (0, 0))
+
+
+        mainSurface.blit(test, (100, 100))
 
         '''
         pygame.draw.circle(mainSurface, YELLOW, (100, 100), 50)
