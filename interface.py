@@ -182,6 +182,28 @@ def main():
         if programState == 'LOG':
             menuLogText = createText('Log', c=NAVY)
 
+            if os.path.exists('data/time.txt'):
+                f = open("data/time.txt", "r")  # Open the file
+                fileList = f.readlines()  # Read the file into a list
+                f.close()  # Close the file
+
+                # removes \n from the text, rends the text, blit the text: 100 each
+                for i in range(0, len(fileList)-2):
+                    if i % 3 == 0:
+                        name = fileList[i].strip()
+                        presence = fileList[i+1].strip()
+                        time = fileList[i+2].strip()
+
+                        studentData = name + '  ' + presence + '  ' + time
+                        studentDataText = createText(studentData, s=30, c=(0, 0, 0))
+                        mainSurface.blit(studentDataText, (100, 100 + 30 * i))
+            else:
+                pass
+
+            # # next page bttn
+            # if mouseUp:
+            #     nextPage += 1
+
         # ——————— ATTENDANCE MENU ——————— #
         if programState == 'ATTENDANCE':
             menuAttendanceText = createText('Attendance', c=NAVY)
