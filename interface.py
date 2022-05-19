@@ -39,6 +39,7 @@ def resizeImg(file, factor):
     return resizedImg
 
 
+# Creates a Rendered Text with Given String
 def createText(t, f="tommy.otf", s=40, c=(58, 101, 139)):
     text = pygame.font.Font(f'resource/{f}', s)
     renderedText = text.render(t, True, c)
@@ -89,30 +90,27 @@ def main():
     GRAY = (230, 232, 237)
     DARKGRAY = (213, 215, 219)
 
+    # Program State (MAIN, LOG, ATTENDANCE, CLASS)
     programState = "MAIN"
 
-    # Create the the size, position and color for a circle
-    circlePos = [200, 200]
-    circleSize = 30
-    circleColor = (255, 0, 0)
-
     # Create a variable to save the button state
-    buttonOn = False  # Default to off
     pageNum = 0
     yVal = 100
     nextPage = 0
 
-    # Images Init
+    # IMAGES INIT #
+    # Logo Images
     logoImg = resizeImg('logo.jpg', 4)
     logoHoverImg = resizeImg('logoHover.jpg', 4)
     logoInit = logoImg
 
-    # Texts Init
+    # TEXTS INIT #
     # Menu Header Texts
     menuLogText = createText('Log')
     menuAttendanceText = createText('Attendance')
     menuClassText = createText('Class')
 
+    # BUTTONS INIT #
     # Add Student Button
     addBttn = createText('Add', s=30, c=WHITE)
     addBttnC = GRAY
@@ -121,9 +119,6 @@ def main():
 
     while True:
         # -----------------------------Event Handling------------------------------------ #
-        # change order, make hover function
-        mousePos = pygame.mouse.get_pos()
-
         ev = pygame.event.poll()
 
         if ev.type == pygame.QUIT:
@@ -132,6 +127,8 @@ def main():
             mouseUp = True
         else:
             mouseUp = False
+
+        mousePos = pygame.mouse.get_pos()
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
@@ -177,8 +174,21 @@ def main():
         else:
             menuClassText = createText('Class', c=BLUE)
 
+        # ——————— MAIN MENU ——————— #
+        if programState == 'MAIN':
+            pass
+
+        # ——————— LOG MENU ——————— #
+        if programState == 'LOG':
+            menuLogText = createText('Log', c=NAVY)
+
+        # ——————— ATTENDANCE MENU ——————— #
+        if programState == 'ATTENDANCE':
+            menuAttendanceText = createText('Attendance', c=NAVY)
+
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
+            menuClassText = createText('Class', c=NAVY)
             createBttn(mainSurface, addBttn, 100, 100, addBttnC)
             addBttnHover = hoverObject(mousePos, addBttn, 100, 100)
             if addBttnHover:
