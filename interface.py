@@ -33,7 +33,7 @@ def horizontalC(item, mainSurface):
 
 # Resizes Images
 def resizeImg(file, factor):
-    resizedImg = pygame.image.load(f'resource/{file}').convert_alpha()
+    resizedImg = pygame.image.load(file).convert_alpha()
     resizedImg = pygame.transform.smoothscale\
         (resizedImg, (resizedImg.get_width() / factor, resizedImg.get_height() / factor))
     return resizedImg
@@ -100,8 +100,8 @@ def main():
 
     # IMAGES INIT #
     # Logo Images
-    logoImg = resizeImg('logo.jpg', 4)
-    logoHoverImg = resizeImg('logoHover.jpg', 4)
+    logoImg = resizeImg('resource/logo.jpg', 4)
+    logoHoverImg = resizeImg('resource/logoHover.jpg', 4)
     logoInit = logoImg
 
     # TEXTS INIT #
@@ -132,7 +132,7 @@ def main():
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
-        # —ESSENTIAL GRAPHICS— #
+        # ——————— MENU BAR GRAPHICS ——————— #
         # Background
         mainSurface.fill((242, 244, 249))
         # Header
@@ -208,9 +208,38 @@ def main():
         if programState == 'ATTENDANCE':
             menuAttendanceText = createText('Attendance', c=NAVY)
 
+            if os.path.exists("img/.DS_Store"):
+                os.remove("img/.DS_Store")
+
+            imgList = os.listdir('img/')
+
+            for i in range(len(imgList)):
+                if i == 0:
+                    studentImgX = 100
+                    studentImgY = 100
+                studentImg = resizeImg('img/'+imgList[i], 10)
+                mainSurface.blit(studentImg, (studentImgX + i*100, studentImgY))
+
+
+
+            # fileNum1 = len(os.listdir('img/'))
+            #
+            # if fileNum1 != fileNum2:
+            #     imgList = os.listdir('img/')
+            #     for i in range(fileNum1):
+            #         if imgList[i] not in encodedImg:
+            #             base = os.path.basename(f'img/{imgList[i]}')
+            #             imgName = os.path.splitext(base)[0]
+            #
+            #             encodedImg.append(imgList[i])
+            #             newFace(imgList[i].replace("'", ""), imgName)
+            #
+            #     fileNum2 = fileNum1
+
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
             menuClassText = createText('Class', c=NAVY)
+
             createBttn(mainSurface, addBttn, 100, 100, addBttnC)
             addBttnHover = hoverObject(mousePos, addBttn, 100, 100)
             if addBttnHover:
@@ -219,34 +248,6 @@ def main():
                     fileCheck()
             else:
                 addBttnC = GRAY
-
-
-        '''
-        pygame.draw.circle(mainSurface, YELLOW, (100, 100), 50)
-        pygame.draw.circle(mainSurface, NAVY, (200, 100), 50)
-        pygame.draw.circle(mainSurface, (227, 227, 227), (300, 100), 50)
-        pygame.draw.circle(mainSurface, (255, 255, 255), (400, 100), 50)
-        '''
-
-        '''
-        if os.path.exists('data/time.txt'):
-            f = open("data/time.txt", "r")  # Open the file
-            fileList = f.readlines()  # Read the file into a list
-            f.close()  # Close the file
-
-            # removes \n from the text, rends the text, blit the text: 100 each
-            for i in range(0, len(fileList)):
-                fileList[i] = fileList[i].strip()
-                nameTime = createText(fileList[i], s=80, c=(0, 0, 0))
-                mainSurface.blit(nameTime, (100, 100 + 100 * i))
-        else:
-            pass
-
-        if mouseUp:
-            nextPage += 1
-
-        pygame.draw.circle(mainSurface, circleColor, circlePos, circleSize)
-        '''
 
         pygame.display.flip()
 
