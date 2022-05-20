@@ -194,9 +194,41 @@ def main():
                         presence = fileList[i+1].strip()
                         time = fileList[i+2].strip()
 
-                        studentData = name + '  ' + presence + '  ' + time
-                        studentDataText = createText(studentData, s=30, c=(0, 0, 0))
-                        mainSurface.blit(studentDataText, (100, 100 + 30 * i))
+                        studentNameBttn = createText(name, s=30, c=BLACK)
+                        studentPresenceBttn = createText(presence, s=30, c=BLACK)
+                        studentTimeBttn = createText(time, s=30, c=BLACK)
+
+                        # If the name is too long to fit in, just show the first name
+                        if studentNameBttn.get_width() >= 250:
+                            nameSplit = name.split(" ", 1)
+                            nameShort = nameSplit[0]
+                            studentNameBttn = createText(nameShort, s=30, c=BLACK)
+
+                        studentBttnsY = 150 + 25 * i
+                        studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                        studentPresenceBttnX = 450
+                        studentTimeBttnX = 800
+
+                        studentNameBttnHover = hoverObject(mousePos, studentNameBttn, studentNameBttnX, studentBttnsY)
+                        studentPresenceBttnHover = hoverObject(mousePos, studentPresenceBttn, studentPresenceBttnX, studentBttnsY)
+                        studentTimeBttnHover = hoverObject(mousePos, studentTimeBttn, studentTimeBttnX, studentBttnsY)
+
+                        # If any of the buttons are hovered, show the full name
+                        # (since long names' last name is not shown)
+                        if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
+                            studentBttnC = DARKGRAY
+                            studentNameBttn = createText(name, s=30, c=BLACK)
+                            studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+
+                            createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                            createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                            createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+                        else:
+                            studentBttnC = GRAY
+                            createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                            createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                            createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+
             else:
                 pass
 
@@ -219,22 +251,6 @@ def main():
                     studentImgY = 100
                 studentImg = resizeImg('img/'+imgList[i], 10)
                 mainSurface.blit(studentImg, (studentImgX + i*100, studentImgY))
-
-
-
-            # fileNum1 = len(os.listdir('img/'))
-            #
-            # if fileNum1 != fileNum2:
-            #     imgList = os.listdir('img/')
-            #     for i in range(fileNum1):
-            #         if imgList[i] not in encodedImg:
-            #             base = os.path.basename(f'img/{imgList[i]}')
-            #             imgName = os.path.splitext(base)[0]
-            #
-            #             encodedImg.append(imgList[i])
-            #             newFace(imgList[i].replace("'", ""), imgName)
-            #
-            #     fileNum2 = fileNum1
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
