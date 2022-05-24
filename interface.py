@@ -61,7 +61,7 @@ def hoverObject(mouse, objects, objectX, objectY):
 
 def main():
     # -----------------------------Setup------------------------------------------------- #
-    global fileList, programState, YELLOW, NAVY
+    #global fileList, programState, YELLOW, NAVY
 
     # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
     root = tk.Tk()
@@ -115,6 +115,11 @@ def main():
     addBttn = createText('Add', s=30, c=WHITE)
     addBttnC = GRAY
 
+    upArrow = False
+    downArrow = False
+
+    pageNum = 0
+
     # -----------------------------Main Game Loop---------------------------------------- #
 
     while True:
@@ -123,10 +128,17 @@ def main():
 
         if ev.type == pygame.QUIT:
             break
+
         if ev.type == pygame.MOUSEBUTTONUP:
             mouseUp = True
         else:
             mouseUp = False
+
+        if ev.type == pygame.KEYDOWN:
+            if ev.key == pygame.K_UP:
+                upArrow = True
+            if ev.key == pygame.K_DOWN:
+                downArrow = True
 
         mousePos = pygame.mouse.get_pos()
 
@@ -157,6 +169,7 @@ def main():
             menuLogText = createText('Log', c=NAVY)
             if mouseUp:
                 programState = 'LOG'
+                pageNum = 0
         else:
             menuLogText = createText('Log', c=BLUE)
 
@@ -184,57 +197,133 @@ def main():
 
             if os.path.exists('data/time.txt'):
                 f = open("data/time.txt", "r")  # Open the file
-                fileList = f.readlines()  # Read the file into a list
+                fileLists = f.readlines()  # Read the file into a list
+                fileList = []
+                studentNum = 0
+                for i in range(len(fileLists)-2):
+                    if i % 3 == 0:
+                        fileList.append([fileLists[i].strip()])
+                        fileList[studentNum].append(fileLists[i+1].strip())
+                        fileList[studentNum].append(fileLists[i+2].strip())
+                        studentNum += 1
                 f.close()  # Close the file
 
-                # removes \n from the text, rends the text, blit the text: 100 each
-                for i in range(0, len(fileList)-2):
-                    if i % 3 == 0:
-                        name = fileList[i].strip()
-                        presence = fileList[i+1].strip()
-                        time = fileList[i+2].strip()
+                # Page control by up/down keys
+                if upArrow:
+                    pageNum += 1
+                elif downArrow:
+                    pageNum -= 1
 
+                if len(fileList) < 8:
+                    maxPage = 0
+                    lastElement = 0
+                else:
+                    if len(fileList) % 8 == 0:
+                        maxPage = len(fileList) / 8 - 1
+                        lastElement = 8 * pageNum + 8
+                    else:
+                        maxPage = math.floor(len(fileList) / 8)
+                        lastElement = 8 * maxPage + (len(fileList) - (8 * maxPage))
+
+                if pageNum < 0:
+                    pageNum = 0
+                if pageNum > maxPage:
+                    pageNum = maxPage
+
+                for j in range(8 * pageNum, lastElement):
+                    name = fileList[j][0]
+                    presence = fileList[j][1]
+                    time = fileList[j][2]
+                    elementNum = j - 8 * pageNum
+
+                    studentNameBttn = createText(name, s=30, c=BLACK)
+                    studentPresenceBttn = createText(presence, s=30, c=BLACK)
+                    studentTimeBttn = createText(time, s=30, c=BLACK)
+
+                    # If the name is too long to fit in, just show the first name
+                    if studentNameBttn.get_width() >= 200:
+                        nameSplit = name.split(" ", 1)
+                        nameShort = nameSplit[0]
+                        studentNameBttn = createText(nameShort, s=30, c=BLACK)
+
+                    studentBttnsY = 150 + 70 * elementNum
+                    studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                    studentPresenceBttnX = 450
+                    studentTimeBttnX = 800
+
+                    studentNameBttnHover = hoverObject(mousePos, studentNameBttn, studentNameBttnX, studentBttnsY)
+                    studentPresenceBttnHover = hoverObject(mousePos, studentPresenceBttn, studentPresenceBttnX,
+                                                           studentBttnsY)
+                    studentTimeBttnHover = hoverObject(mousePos, studentTimeBttn, studentTimeBttnX, studentBttnsY)
+
+                    # If any of the buttons are hovered, show the full name
+                    # (since long names' last name is not shown)
+                    if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
+                        studentBttnC = DARKGRAY
                         studentNameBttn = createText(name, s=30, c=BLACK)
-                        studentPresenceBttn = createText(presence, s=30, c=BLACK)
-                        studentTimeBttn = createText(time, s=30, c=BLACK)
-
-                        # If the name is too long to fit in, just show the first name
-                        if studentNameBttn.get_width() >= 250:
-                            nameSplit = name.split(" ", 1)
-                            nameShort = nameSplit[0]
-                            studentNameBttn = createText(nameShort, s=30, c=BLACK)
-
-                        studentBttnsY = 150 + 25 * i
                         studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
-                        studentPresenceBttnX = 450
-                        studentTimeBttnX = 800
 
-                        studentNameBttnHover = hoverObject(mousePos, studentNameBttn, studentNameBttnX, studentBttnsY)
-                        studentPresenceBttnHover = hoverObject(mousePos, studentPresenceBttn, studentPresenceBttnX, studentBttnsY)
-                        studentTimeBttnHover = hoverObject(mousePos, studentTimeBttn, studentTimeBttnX, studentBttnsY)
+                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+                    else:
+                        studentBttnC = GRAY
+                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
 
-                        # If any of the buttons are hovered, show the full name
-                        # (since long names' last name is not shown)
-                        if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
-                            studentBttnC = DARKGRAY
-                            studentNameBttn = createText(name, s=30, c=BLACK)
-                            studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                '''
+                # removes \n from the text, rends the text, blit the text: 100 each
+                for j in range(len(fileList)):
+                    name = fileList[j][0]
+                    presence = fileList[j][1]
+                    time = fileList[j][2]
 
-                            createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
-                            createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
-                            createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
-                        else:
-                            studentBttnC = GRAY
-                            createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
-                            createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
-                            createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+                    studentNameBttn = createText(name, s=30, c=BLACK)
+                    studentPresenceBttn = createText(presence, s=30, c=BLACK)
+                    studentTimeBttn = createText(time, s=30, c=BLACK)
+
+                    # If the name is too long to fit in, just show the first name
+                    if studentNameBttn.get_width() >= 200:
+                        nameSplit = name.split(" ", 1)
+                        nameShort = nameSplit[0]
+                        studentNameBttn = createText(nameShort, s=30, c=BLACK)
+
+                    studentBttnsY = 150 + 70 * j
+                    studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                    studentPresenceBttnX = 450
+                    studentTimeBttnX = 800
+
+                    # Page control by up/down keys
+                    # if upArrow:
+                    #     chnagedY += 1
+                    # elif downArrow:
+                    #     chnagedY -= 1
+
+                    studentNameBttnHover = hoverObject(mousePos, studentNameBttn, studentNameBttnX, studentBttnsY)
+                    studentPresenceBttnHover = hoverObject(mousePos, studentPresenceBttn, studentPresenceBttnX,
+                                                           studentBttnsY)
+                    studentTimeBttnHover = hoverObject(mousePos, studentTimeBttn, studentTimeBttnX, studentBttnsY)
+
+                    # If any of the buttons are hovered, show the full name
+                    # (since long names' last name is not shown)
+                    if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
+                        studentBttnC = DARKGRAY
+                        studentNameBttn = createText(name, s=30, c=BLACK)
+                        studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+
+                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+                    else:
+                        studentBttnC = GRAY
+                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
+                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
+                '''
 
             else:
                 pass
-
-            # # next page bttn
-            # if mouseUp:
-            #     nextPage += 1
 
         # ——————— ATTENDANCE MENU ——————— #
         if programState == 'ATTENDANCE':
