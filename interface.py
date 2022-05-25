@@ -216,9 +216,9 @@ def main():
                     pageNum += 1
                     rightArrow = False
 
+                #
                 if len(fileList) < 8:
                     maxPage = 0
-                    lastElement = 0
                 else:
                     if len(fileList) % 8 == 0:
                         maxPage = len(fileList) / 8 - 1
@@ -231,7 +231,10 @@ def main():
                 else:
                     if pageNum <= 0:
                         pageNum = 0
-                    lastElement = 8 * pageNum + 8
+                    if len(fileList) < 8:
+                        lastElement = len(fileList)
+                    else:
+                        lastElement = 8 * pageNum + 8
 
                 for j in range(8 * pageNum, lastElement):
                     elementNum = j - 8 * pageNum
