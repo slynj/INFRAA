@@ -114,6 +114,11 @@ def main():
     # Add Student Button
     addBttn = createText('Add', s=30, c=WHITE)
     addBttnC = GRAY
+    # Next Page Button
+    rightBttn = createText('->', s=50, c=WHITE)
+    leftBttn = createText('<-', s=50, c=WHITE)
+    rightBttnC = DARKGRAY
+    leftBttnC = DARKGRAY
 
     leftArrow = False
     rightArrow = False
@@ -215,6 +220,25 @@ def main():
                 elif rightArrow:
                     pageNum += 1
                     rightArrow = False
+
+                createBttn(mainSurface, leftBttn, 400, 700, leftBttnC)
+                createBttn(mainSurface, rightBttn, 500, 700, rightBttnC)
+                leftBttnHover = hoverObject(mousePos, leftBttn, 400, 700)
+                rightBttnHover = hoverObject(mousePos, rightBttn, 500, 700)
+
+                if leftBttnHover:
+                    leftBttnC = GRAY
+                    if mouseUp:
+                        mouseUp = False
+                        pageNum -= 1
+                elif rightBttnHover:
+                    rightBttnC = GRAY
+                    if mouseUp:
+                        mouseUp = False
+                        pageNum += 1
+                else:
+                    leftBttnC = DARKGRAY
+                    rightBttnC = DARKGRAY
 
                 # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if len(fileList) < 8:
