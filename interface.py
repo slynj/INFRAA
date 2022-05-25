@@ -115,8 +115,8 @@ def main():
     addBttn = createText('Add', s=30, c=WHITE)
     addBttnC = GRAY
     # Next Page Button
-    rightBttn = createText('->', s=50, c=WHITE)
-    leftBttn = createText('<-', s=50, c=WHITE)
+    rightBttn = createText(' > ', s=30, c=WHITE)
+    leftBttn = createText(' < ', s=30, c=WHITE)
     rightBttnC = DARKGRAY
     leftBttnC = DARKGRAY
 
@@ -221,20 +221,20 @@ def main():
                     pageNum += 1
                     rightArrow = False
 
-                createBttn(mainSurface, leftBttn, 400, 700, leftBttnC)
-                createBttn(mainSurface, rightBttn, 500, 700, rightBttnC)
-                leftBttnHover = hoverObject(mousePos, leftBttn, 400, 700)
-                rightBttnHover = hoverObject(mousePos, rightBttn, 500, 700)
+                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
+                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
+                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
 
                 if leftBttnHover:
                     leftBttnC = GRAY
+                    rightBttnC = DARKGRAY
                     if mouseUp:
-                        mouseUp = False
                         pageNum -= 1
                 elif rightBttnHover:
                     rightBttnC = GRAY
+                    leftBttnC = DARKGRAY
                     if mouseUp:
-                        mouseUp = False
                         pageNum += 1
                 else:
                     leftBttnC = DARKGRAY
