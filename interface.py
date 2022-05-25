@@ -216,7 +216,7 @@ def main():
                     pageNum += 1
                     rightArrow = False
 
-                #
+                # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if len(fileList) < 8:
                     maxPage = 0
                 else:
@@ -225,6 +225,7 @@ def main():
                     else:
                         maxPage = math.floor(len(fileList) / 8)
 
+                # Set Min/Max Page Number and Calculate the index number of the Last Element (for the for loop)
                 if pageNum >= maxPage:
                     pageNum = maxPage
                     lastElement = 8 * maxPage + (len(fileList) - (8 * maxPage))
@@ -236,6 +237,7 @@ def main():
                     else:
                         lastElement = 8 * pageNum + 8
 
+                # Draw the Names
                 for j in range(8 * pageNum, lastElement):
                     elementNum = j - 8 * pageNum
 
