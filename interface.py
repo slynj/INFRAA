@@ -115,8 +115,8 @@ def main():
     addBttn = createText('Add', s=30, c=WHITE)
     addBttnC = GRAY
 
-    upArrow = False
-    downArrow = False
+    leftArrow = False
+    rightArrow = False
 
     pageNum = 0
 
@@ -135,10 +135,10 @@ def main():
             mouseUp = False
 
         if ev.type == pygame.KEYDOWN:
-            if ev.key == pygame.K_UP:
-                upArrow = True
-            if ev.key == pygame.K_DOWN:
-                downArrow = True
+            if ev.key == pygame.K_LEFT:
+                leftArrow = True
+            if ev.key == pygame.K_RIGHT:
+                rightArrow = True
 
         mousePos = pygame.mouse.get_pos()
 
@@ -209,10 +209,12 @@ def main():
                 f.close()  # Close the file
 
                 # Page control by up/down keys
-                if upArrow:
-                    pageNum += 1
-                elif downArrow:
+                if leftArrow:
                     pageNum -= 1
+                    leftArrow = False
+                elif rightArrow:
+                    pageNum += 1
+                    rightArrow = False
 
                 if len(fileList) < 8:
                     maxPage = 0
@@ -220,21 +222,23 @@ def main():
                 else:
                     if len(fileList) % 8 == 0:
                         maxPage = len(fileList) / 8 - 1
-                        lastElement = 8 * pageNum + 8
                     else:
                         maxPage = math.floor(len(fileList) / 8)
-                        lastElement = 8 * maxPage + (len(fileList) - (8 * maxPage))
 
-                if pageNum < 0:
-                    pageNum = 0
-                if pageNum > maxPage:
+                if pageNum >= maxPage:
                     pageNum = maxPage
+                    lastElement = 8 * maxPage + (len(fileList) - (8 * maxPage))
+                else:
+                    if pageNum <= 0:
+                        pageNum = 0
+                    lastElement = 8 * pageNum + 8
 
                 for j in range(8 * pageNum, lastElement):
+                    elementNum = j - 8 * pageNum
+
                     name = fileList[j][0]
                     presence = fileList[j][1]
                     time = fileList[j][2]
-                    elementNum = j - 8 * pageNum
 
                     studentNameBttn = createText(name, s=30, c=BLACK)
                     studentPresenceBttn = createText(presence, s=30, c=BLACK)
@@ -271,56 +275,6 @@ def main():
                         createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
                         createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
                         createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
-
-                '''
-                # removes \n from the text, rends the text, blit the text: 100 each
-                for j in range(len(fileList)):
-                    name = fileList[j][0]
-                    presence = fileList[j][1]
-                    time = fileList[j][2]
-
-                    studentNameBttn = createText(name, s=30, c=BLACK)
-                    studentPresenceBttn = createText(presence, s=30, c=BLACK)
-                    studentTimeBttn = createText(time, s=30, c=BLACK)
-
-                    # If the name is too long to fit in, just show the first name
-                    if studentNameBttn.get_width() >= 200:
-                        nameSplit = name.split(" ", 1)
-                        nameShort = nameSplit[0]
-                        studentNameBttn = createText(nameShort, s=30, c=BLACK)
-
-                    studentBttnsY = 150 + 70 * j
-                    studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
-                    studentPresenceBttnX = 450
-                    studentTimeBttnX = 800
-
-                    # Page control by up/down keys
-                    # if upArrow:
-                    #     chnagedY += 1
-                    # elif downArrow:
-                    #     chnagedY -= 1
-
-                    studentNameBttnHover = hoverObject(mousePos, studentNameBttn, studentNameBttnX, studentBttnsY)
-                    studentPresenceBttnHover = hoverObject(mousePos, studentPresenceBttn, studentPresenceBttnX,
-                                                           studentBttnsY)
-                    studentTimeBttnHover = hoverObject(mousePos, studentTimeBttn, studentTimeBttnX, studentBttnsY)
-
-                    # If any of the buttons are hovered, show the full name
-                    # (since long names' last name is not shown)
-                    if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
-                        studentBttnC = DARKGRAY
-                        studentNameBttn = createText(name, s=30, c=BLACK)
-                        studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
-
-                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
-                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
-                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
-                    else:
-                        studentBttnC = GRAY
-                        createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
-                        createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
-                        createBttn(mainSurface, studentTimeBttn, studentTimeBttnX, studentBttnsY, studentBttnC)
-                '''
 
             else:
                 pass
