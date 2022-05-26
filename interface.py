@@ -93,11 +93,6 @@ def main():
     # Program State (MAIN, LOG, ATTENDANCE, CLASS)
     programState = "MAIN"
 
-    # Create a variable to save the button state
-    pageNum = 0
-    yVal = 100
-    nextPage = 0
-
     # IMAGES INIT #
     # Logo Images
     logoImg = resizeImg('resource/logo.jpg', 4)
@@ -123,7 +118,8 @@ def main():
     leftArrow = False
     rightArrow = False
 
-    pageNum = 0
+    logPageNum = 0
+    attPageNum = 0
 
     # -----------------------------Main Game Loop---------------------------------------- #
 
@@ -174,7 +170,7 @@ def main():
             menuLogText = createText('Log', c=NAVY)
             if mouseUp:
                 programState = 'LOG'
-                pageNum = 0
+                logPageNum = 0
         else:
             menuLogText = createText('Log', c=BLUE)
 
@@ -182,6 +178,7 @@ def main():
             menuAttendanceText = createText('Attendance', c=NAVY)
             if mouseUp:
                 programState = 'ATTENDANCE'
+                attPageNum = 0
         else:
             menuAttendanceText = createText('Attendance', c=BLUE)
 
@@ -215,10 +212,10 @@ def main():
 
                 # Page control by up/down keys
                 if leftArrow:
-                    pageNum -= 1
+                    logPageNum -= 1
                     leftArrow = False
                 elif rightArrow:
-                    pageNum += 1
+                    logPageNum += 1
                     rightArrow = False
 
                 createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
@@ -230,12 +227,12 @@ def main():
                     leftBttnC = GRAY
                     rightBttnC = DARKGRAY
                     if mouseUp:
-                        pageNum -= 1
+                        logPageNum -= 1
                 elif rightBttnHover:
                     rightBttnC = GRAY
                     leftBttnC = DARKGRAY
                     if mouseUp:
-                        pageNum += 1
+                        logPageNum += 1
                 else:
                     leftBttnC = DARKGRAY
                     rightBttnC = DARKGRAY
@@ -250,20 +247,20 @@ def main():
                         maxPage = math.floor(len(fileList) / 8)
 
                 # Set Min/Max Page Number and Calculate the index number of the Last Element (for the for loop)
-                if pageNum >= maxPage:
-                    pageNum = maxPage
+                if logPageNum >= maxPage:
+                    logPageNum = maxPage
                     lastElement = 8 * maxPage + (len(fileList) - (8 * maxPage))
                 else:
-                    if pageNum <= 0:
-                        pageNum = 0
+                    if logPageNum <= 0:
+                        logPageNum = 0
                     if len(fileList) < 8:
                         lastElement = len(fileList)
                     else:
-                        lastElement = 8 * pageNum + 8
+                        lastElement = 8 * logPageNum + 8
 
                 # Draw the Names
-                for j in range(8 * pageNum, lastElement):
-                    elementNum = j - 8 * pageNum
+                for j in range(8 * logPageNum, lastElement):
+                    elementNum = j - 8 * logPageNum
 
                     name = fileList[j][0]
                     presence = fileList[j][1]
@@ -316,13 +313,80 @@ def main():
                 os.remove("img/.DS_Store")
 
             imgList = os.listdir('img/')
+            imgListLen = len(imgList)
 
-            for i in range(len(imgList)):
-                if i == 0:
-                    studentImgX = 100
-                    studentImgY = 100
-                studentImg = resizeImg('img/'+imgList[i], 10)
-                mainSurface.blit(studentImg, (studentImgX + i*100, studentImgY))
+            if imgListLen == 0:
+                pass
+            else:
+                # Page control by up/down keys
+                if leftArrow:
+                    attPageNum -= 1
+                    leftArrow = False
+                elif rightArrow:
+                    attPageNum += 1
+                    rightArrow = False
+
+                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
+                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
+                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
+
+                if leftBttnHover:
+                    leftBttnC = GRAY
+                    rightBttnC = DARKGRAY
+                    if mouseUp:
+                        attPageNum -= 1
+                elif rightBttnHover:
+                    rightBttnC = GRAY
+                    leftBttnC = DARKGRAY
+                    if mouseUp:
+                        attPageNum += 1
+                else:
+                    leftBttnC = DARKGRAY
+                    rightBttnC = DARKGRAY
+
+                # Calculate What the Maximum Page Number is Depending on the Length of the File
+                if imgListLen < 10:
+                    attMaxPage = 0
+                else:
+                    if imgListLen % 10 == 0:
+                        attMaxPage = imgListLen / 10 - 1
+                    else:
+                        attMaxPage = math.floor(imgListLen / 10)
+
+                # Set Min/Max Page Number and Calculate the index number of the Last Element (for the for loop)
+                if attPageNum >= attMaxPage:
+                    attPageNum = attMaxPage
+                    attLastElement = 10 * attMaxPage + (imgListLen - (10 * attMaxPage))
+                else:
+                    if attPageNum <= 0:
+                        attPageNum = 0
+                    if imgListLen < 10:
+                        attLastElement = imgListLen
+                    else:
+                        attLastElement = 8 * attPageNum + 8
+
+                for i in range(10 * attPageNum, attLastElement):
+                    attElementNum = i - 10 * attPageNum
+
+                    if attElementNum > 4:
+                        attElementNum -= 5
+                        studentImgY = 400
+                    else:
+                        studentImgY = 100
+
+                    if attElementNum == 0:
+                        studentImgX = 100
+
+                    # Name of the Student (show when hover the img)
+                    base = os.path.basename(f'img/{imgList[i]}')
+                    imgName = os.path.splitext(base)[0]
+
+                    studentImg = pygame.image.load('img/'+imgList[i]).convert_alpha()
+                    studentImg = pygame.transform.smoothscale \
+                    (studentImg, (160, 200))
+
+                    mainSurface.blit(studentImg, (studentImgX + attElementNum*200, studentImgY))
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
