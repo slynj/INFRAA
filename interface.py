@@ -397,16 +397,12 @@ def main():
                     if studentImgHover:
                         # menuClassText = createText(imgName, c=NAVY)
                         studentNameImg = createText(imgName, s=30, c=WHITE)
-                        studentNameImgC = GRAY
+                        studentNameImgC = BLUE
 
                         studentImgCentre = horizontalC(studentImg, mainSurface)
                         studentNameImgCentre = horizontalC(studentNameImg, mainSurface)
-                        #studentImgModifiedX = studentImgModifiedX - (abs(studentNameImgCentre - studentImgCentre))
-                        if studentNameImgCentre > studentImgCentre:
-                            studentImgModifiedX = studentImgModifiedX + (studentNameImgCentre - studentImgCentre)
-                        elif studentImgCentre > studentNameImgCentre:
-                            studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
 
+                        studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
                         createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgY, studentNameImgC)
 
         # ——————— CLASS MENU ——————— #
