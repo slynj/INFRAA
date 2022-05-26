@@ -384,21 +384,30 @@ def main():
                     studentImg = pygame.image.load('img/'+imgList[i]).convert_alpha()
                     studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
 
-                    mainSurface.blit(studentImg, (studentImgX + attElementNum*200, studentImgY))
+                    studentImgModifiedX = studentImgX + attElementNum*200
+                    mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
 
                     # Get Student Name
                     base = os.path.basename(f'img/{imgList[i]}')
                     imgName = os.path.splitext(base)[0]
 
                     # Img Hover
-                    studentImgHover = hoverObject(mousePos, studentImg, studentImgX + attElementNum*200, studentImgY)
+                    studentImgHover = hoverObject(mousePos, studentImg, studentImgModifiedX, studentImgY)
 
                     if studentImgHover:
                         # menuClassText = createText(imgName, c=NAVY)
-
                         studentNameImg = createText(imgName, s=30, c=WHITE)
                         studentNameImgC = GRAY
-                        createBttn(mainSurface, studentNameImg, studentImgX + attElementNum*200, studentImgY, studentNameImgC)
+
+                        studentImgCentre = horizontalC(studentImg, mainSurface)
+                        studentNameImgCentre = horizontalC(studentNameImg, mainSurface)
+                        #studentImgModifiedX = studentImgModifiedX - (abs(studentNameImgCentre - studentImgCentre))
+                        if studentNameImgCentre > studentImgCentre:
+                            studentImgModifiedX = studentImgModifiedX + (studentNameImgCentre - studentImgCentre)
+                        elif studentImgCentre > studentNameImgCentre:
+                            studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
+
+                        createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgY, studentNameImgC)
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
