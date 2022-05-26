@@ -366,9 +366,11 @@ def main():
                     else:
                         attLastElement = 8 * attPageNum + 8
 
+                # Depending on the Page Number, change the index number (which changes the images to display)
                 for i in range(10 * attPageNum, attLastElement):
                     attElementNum = i - 10 * attPageNum
 
+                    # Change X and Y of the Img Depending on their index Number
                     if attElementNum > 4:
                         attElementNum -= 5
                         studentImgY = 400
@@ -378,15 +380,25 @@ def main():
                     if attElementNum == 0:
                         studentImgX = 100
 
-                    # Name of the Student (show when hover the img)
+                    # Student Images Display
+                    studentImg = pygame.image.load('img/'+imgList[i]).convert_alpha()
+                    studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
+
+                    mainSurface.blit(studentImg, (studentImgX + attElementNum*200, studentImgY))
+
+                    # Get Student Name
                     base = os.path.basename(f'img/{imgList[i]}')
                     imgName = os.path.splitext(base)[0]
 
-                    studentImg = pygame.image.load('img/'+imgList[i]).convert_alpha()
-                    studentImg = pygame.transform.smoothscale \
-                    (studentImg, (160, 200))
+                    # Img Hover
+                    studentImgHover = hoverObject(mousePos, studentImg, studentImgX + attElementNum*200, studentImgY)
 
-                    mainSurface.blit(studentImg, (studentImgX + attElementNum*200, studentImgY))
+                    if studentImgHover:
+                        # menuClassText = createText(imgName, c=NAVY)
+
+                        studentNameImg = createText(imgName, s=30, c=WHITE)
+                        studentNameImgC = GRAY
+                        createBttn(mainSurface, studentNameImg, studentImgX + attElementNum*200, studentImgY, studentNameImgC)
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
