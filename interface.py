@@ -377,9 +377,9 @@ def main():
                     # Change X and Y of the Img Depending on their index Number
                     if attElementNum > 4:
                         attElementNum -= 5
-                        studentImgY = 400
+                        studentImgY = 450
                     else:
-                        studentImgY = 100
+                        studentImgY = 150
 
                     if attElementNum == 0:
                         studentImgX = 100
@@ -404,10 +404,11 @@ def main():
                         studentNameImgC = BLUE
 
                         studentImgCentre = horizontalC(studentImg, mainSurface)
-                        studentNameImgCentre = horizontalC(studentNameImg, mainSurface)
+                        studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
 
                         studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
-                        createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgY, studentNameImgC)
+                        studentImgModifiedY = studentImgY - studentNameImg.get_height() - 5
+                        createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgModifiedY, studentNameImgC)
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
