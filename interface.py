@@ -19,11 +19,13 @@ def fileCheck():
 
 
 def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
-    paddingW = text.get_width() * 0.3
-    paddingH = text.get_height() * 0.1
-    dimension = [textX - paddingW / 2, textY - paddingH / 2, text.get_width() + paddingW, text.get_height() + paddingH]
+    # paddingW = text.get_width() * 0.3
+    # paddingH = text.get_height() * 0.1
+    paddingW = 15
+    paddingH = 5
+    dimension = [textX, textY, text.get_width() + paddingW, text.get_height() + paddingH]
     pygame.draw.rect(mainSurface, c, dimension, border_radius=10)
-    mainSurface.blit(text, (textX, textY))
+    mainSurface.blit(text, (textX + paddingW/2, textY + paddingH/2))
 
 
 # Calculates what coordinate of the item's horizontal centre is
@@ -48,10 +50,11 @@ def createText(t, f="tommy.otf", s=40, c=(58, 101, 139)):
 
 # Collision Detection for Rectangles (shapes, images, texts)
 def hoverObject(mouse, objects, objectX, objectY):
-    paddingW = objects.get_width() * 0.3
-    paddingH = objects.get_height() * 0.1
-    dimension = [objectX - paddingW / 2, objectY - paddingH / 2,
-                 objects.get_width() + paddingW, objects.get_height() + paddingH]
+    # paddingW = objects.get_width() * 0.3
+    # paddingH = objects.get_height() * 0.1
+    paddingW = 15
+    paddingH = 5
+    dimension = [objectX, objectY, objects.get_width() + paddingW, objects.get_height() + paddingH]
     area = pygame.Rect(dimension)
     if area.collidepoint(mouse[0], mouse[1]):
         return True
@@ -277,7 +280,7 @@ def main():
                         studentNameBttn = createText(nameShort, s=30, c=BLACK)
 
                     studentBttnsY = 150 + 70 * elementNum
-                    studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                    studentNameBttnX = 80 #+ (studentNameBttn.get_width() * 0.3) / 2
                     studentPresenceBttnX = 450
                     studentTimeBttnX = 800
 
@@ -291,7 +294,7 @@ def main():
                     if studentNameBttnHover or studentPresenceBttnHover or studentTimeBttnHover:
                         studentBttnC = DARKGRAY
                         studentNameBttn = createText(name, s=30, c=BLACK)
-                        studentNameBttnX = 80 + (studentNameBttn.get_width() * 0.3) / 2
+                        studentNameBttnX = 100
 
                         createBttn(mainSurface, studentPresenceBttn, studentPresenceBttnX, studentBttnsY, studentBttnC)
                         createBttn(mainSurface, studentNameBttn, studentNameBttnX, studentBttnsY, studentBttnC)
@@ -326,8 +329,6 @@ def main():
                     attPageNum += 1
                     rightArrow = False
 
-                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
-                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
                 leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
                 rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
 
@@ -344,6 +345,9 @@ def main():
                 else:
                     leftBttnC = DARKGRAY
                     rightBttnC = DARKGRAY
+
+                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
+                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
 
                 # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if imgListLen < 10:
@@ -364,7 +368,7 @@ def main():
                     if imgListLen < 10:
                         attLastElement = imgListLen
                     else:
-                        attLastElement = 8 * attPageNum + 8
+                        attLastElement = 10 * attPageNum + 10
 
                 # Depending on the Page Number, change the index number (which changes the images to display)
                 for i in range(10 * attPageNum, attLastElement):
@@ -384,7 +388,7 @@ def main():
                     studentImg = pygame.image.load('img/'+imgList[i]).convert_alpha()
                     studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
 
-                    studentImgModifiedX = studentImgX + attElementNum*200
+                    studentImgModifiedX = studentImgX + attElementNum * 200
                     mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
 
                     # Get Student Name
@@ -394,8 +398,8 @@ def main():
                     # Img Hover
                     studentImgHover = hoverObject(mousePos, studentImg, studentImgModifiedX, studentImgY)
 
+                    # Name Display When Hovered
                     if studentImgHover:
-                        # menuClassText = createText(imgName, c=NAVY)
                         studentNameImg = createText(imgName, s=30, c=WHITE)
                         studentNameImgC = BLUE
 
