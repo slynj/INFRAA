@@ -318,7 +318,7 @@ def main():
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
 
-            if imgListLen == 0:
+            if imgListLen == 0 or not os.path.exists("data/time.txt"):
                 pass
             else:
                 # Page control by up/down keys
@@ -377,7 +377,7 @@ def main():
                     # Change X and Y of the Img Depending on their index Number
                     if attElementNum > 4:
                         attElementNum -= 5
-                        studentImgY = 450
+                        studentImgY = 470
                     else:
                         studentImgY = 150
 
@@ -391,6 +391,31 @@ def main():
                     studentImgModifiedX = studentImgX + attElementNum * 200
                     mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
 
+                    # Save Student Presence in List
+                    f = open("data/time.txt", "r")  # Open the file
+                    fileLists = f.readlines()  # Read the file into a list
+                    fileList = []
+                    for j in range(len(fileLists) - 1):
+                        if j % 3 == 0:
+                            fileList.append(fileLists[j + 1].strip())
+                    f.close()  # Close the file
+
+                    # Display Student Presence
+                    studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
+                    if fileList[i] == 'Absent':
+                        studentPresenceImgC = (255, 0, 0)#RED
+                    elif fileList[i] == 'Present':
+                        studentPresenceImgC = (0, 255, 0)
+                    else:
+                        studentPresenceImgC = DARKGRAY
+
+                    studentImgCentre = horizontalC(studentImg, mainSurface)
+                    studentPresenceImgCentre = horizontalC(studentPresenceImg, mainSurface) - 7
+
+                    studentPresenceImgX = studentImgModifiedX - (studentImgCentre - studentPresenceImgCentre)
+                    studentPresenceImgY = studentImgY + 210
+                    createBttn(mainSurface, studentPresenceImg, studentPresenceImgX, studentPresenceImgY, studentPresenceImgC)
+
                     # Get Student Name
                     base = os.path.basename(f'img/{imgList[i]}')
                     imgName = os.path.splitext(base)[0]
@@ -403,11 +428,10 @@ def main():
                         studentNameImg = createText(imgName, s=30, c=WHITE)
                         studentNameImgC = BLUE
 
-                        studentImgCentre = horizontalC(studentImg, mainSurface)
                         studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
 
                         studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
-                        studentImgModifiedY = studentImgY - studentNameImg.get_height() - 5
+                        studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
                         createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgModifiedY, studentNameImgC)
 
         # ——————— CLASS MENU ——————— #
