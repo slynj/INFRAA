@@ -92,6 +92,8 @@ def main():
     BLACK = (0, 0, 0)
     GRAY = (230, 232, 237)
     DARKGRAY = (213, 215, 219)
+    GREEN = (88, 168, 112)
+    RED = (194, 62, 62)
 
     # Program State (MAIN, LOG, ATTENDANCE, CLASS)
     programState = "MAIN"
@@ -261,6 +263,9 @@ def main():
                     else:
                         lastElement = 8 * logPageNum + 8
 
+                logPageNum = int(logPageNum)
+                lastElement = int(lastElement)
+
                 # Draw the Names
                 for j in range(8 * logPageNum, lastElement):
                     elementNum = j - 8 * logPageNum
@@ -280,7 +285,7 @@ def main():
                         studentNameBttn = createText(nameShort, s=30, c=BLACK)
 
                     studentBttnsY = 150 + 70 * elementNum
-                    studentNameBttnX = 80 #+ (studentNameBttn.get_width() * 0.3) / 2
+                    studentNameBttnX = 80
                     studentPresenceBttnX = 450
                     studentTimeBttnX = 800
 
@@ -370,6 +375,12 @@ def main():
                     else:
                         attLastElement = 10 * attPageNum + 10
 
+                # file content checking
+                f = open("data/time.txt", "r")  # Open the file
+                while True:
+                    if len(f.readlines()) >= attLastElement:
+                        break
+
                 # Depending on the Page Number, change the index number (which changes the images to display)
                 for i in range(10 * attPageNum, attLastElement):
                     attElementNum = i - 10 * attPageNum
@@ -403,9 +414,9 @@ def main():
                     # Display Student Presence
                     studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
                     if fileList[i] == 'Absent':
-                        studentPresenceImgC = (255, 0, 0)#RED
+                        studentPresenceImgC = RED
                     elif fileList[i] == 'Present':
-                        studentPresenceImgC = (0, 255, 0)
+                        studentPresenceImgC = GREEN
                     else:
                         studentPresenceImgC = DARKGRAY
 
