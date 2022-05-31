@@ -454,9 +454,19 @@ def main():
             if os.path.exists("img/.DS_Store"):
                 os.remove("img/.DS_Store")
 
-            # Draw Add Button
-            createBttn(mainSurface, addBttn, 100, 150, addBttnC)
-            addBttnHover = hoverObject(mousePos, addBttn, 100, 150)
+            # Add Button Draw & Collision Detection
+            dimensionAddBttn = [100, 150, addBttn.get_width() + 100, addBttn.get_height() + 165]
+            pygame.draw.rect(mainSurface, addBttnC, dimensionAddBttn, border_radius=10)
+            addSymbText = createText('+', s=100, c=WHITE)
+            mainSurface.blit(addBttn, (150, 150 + 165 / 1.5))
+            mainSurface.blit(addSymbText, (158, 160))
+
+            addBttnArea = pygame.Rect(dimensionAddBttn)
+            if addBttnArea.collidepoint(mousePos[0], mousePos[1]):
+                addBttnHover = True
+            else:
+                addBttnHover = False
+
             if addBttnHover:
                 addBttnC = DARKGRAY
                 if mouseUp:
