@@ -125,6 +125,7 @@ def main():
 
     logPageNum = 0
     attPageNum = 0
+    classPageNum = 0
 
     # -----------------------------Main Game Loop---------------------------------------- #
 
@@ -191,6 +192,7 @@ def main():
             menuClassText = createText('Class', c=NAVY)
             if mouseUp:
                 programState = 'CLASS'
+                classPageNum = 0
         else:
             menuClassText = createText('Class', c=BLUE)
 
@@ -449,14 +451,136 @@ def main():
         if programState == 'CLASS':
             menuClassText = createText('Class', c=NAVY)
 
-            createBttn(mainSurface, addBttn, 100, 100, addBttnC)
-            addBttnHover = hoverObject(mousePos, addBttn, 100, 100)
+            if os.path.exists("img/.DS_Store"):
+                os.remove("img/.DS_Store")
+
+            # Draw Add Button
+            createBttn(mainSurface, addBttn, 100, 150, addBttnC)
+            addBttnHover = hoverObject(mousePos, addBttn, 100, 150)
             if addBttnHover:
                 addBttnC = DARKGRAY
                 if mouseUp:
                     fileCheck()
             else:
                 addBttnC = GRAY
+
+            imgList = os.listdir('img/')
+            imgListLen = len(imgList)
+
+            if imgListLen == 0 or not os.path.exists("data/time.txt"):
+                pass
+            else:
+                # Page control by up/down keys
+                if leftArrow:
+                    classPageNum -= 1
+                    leftArrow = False
+                elif rightArrow:
+                    classPageNum += 1
+                    rightArrow = False
+
+                # Arrow Button Hover Detection
+                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
+                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
+
+                if leftBttnHover:
+                    leftBttnC = GRAY
+                    rightBttnC = DARKGRAY
+                    if mouseUp:
+                        classPageNum -= 1
+                elif rightBttnHover:
+                    rightBttnC = GRAY
+                    leftBttnC = DARKGRAY
+                    if mouseUp:
+                        classPageNum += 1
+                else:
+                    leftBttnC = DARKGRAY
+                    rightBttnC = DARKGRAY
+
+                # Page Control on Screen
+                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
+                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+
+                # Calculate What the Maximum Page Number is Depending on the Length of the File
+                if imgListLen < 10:
+                    classMaxPage = 0
+                elif imgListLen % 9 == 0:
+                    classMaxPage = imgListLen / 9 - 1
+                else:
+                    classMaxPage = math.floor(imgListLen / 9)
+
+                # Set Min/Max Page Number and Calculate the index number of the Last Element (for the for loop)
+                if classPageNum >= classMaxPage:
+                    classPageNum = classMaxPage
+                    classLastElement = imgListLen
+                else:
+                    if classPageNum <= 0:
+                        classPageNum = 0
+                    if imgListLen < 10:
+                        classLastElement = imgListLen
+                    else:
+                        classLastElement = 9 * classPageNum + 9
+
+                # file content checking
+                f = open("data/time.txt", "r")  # Open the file
+                while True:
+                    if len(f.readlines()) >= classLastElement:
+                        break
+
+                # Display the Student Images
+                for i in range(9 * classPageNum, classLastElement):
+                    # Index Num of the Image in Terms of the Row of the Page
+                    classElementNum = i - 9 * classPageNum
+
+                    # Change X and Y of the Img Depending on their index Number
+                    if classElementNum < 4:
+                        studentImgY = 150
+                        studentImgX = 300
+                    else:
+                        classElementNum -= 4
+                        studentImgY = 470
+                        if classElementNum == 0:
+                            studentImgX = 100
+
+                    # Student Images Display
+                    studentImg = pygame.image.load('img/' + imgList[i]).convert_alpha()
+                    studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
+
+                    studentImgModifiedX = studentImgX + classElementNum * 200
+                    mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
+
+                    # Get the Student Name from the Img File Name
+                    base = os.path.basename(f'img/{imgList[i]}')
+                    imgName = os.path.splitext(base)[0]
+
+                    studentNameImg = createText(imgName, s=30, c=WHITE)
+                    studentNameImgC = BLUE
+
+                    # If the Name is Longer than the Image Display Size, Only Show First Name
+                    if studentNameImg.get_width() >= 160:
+                        nameSplit = imgName.split(" ", 1)
+                        nameShort = nameSplit[0]
+                        studentNameImg = createText(nameShort, s=30, c=WHITE)
+
+                    # Calculate the Centre X / Y Values for the Names
+                    studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
+                    studentImgCentre = horizontalC(studentImg, mainSurface)
+                    studentImgModifiedNameX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
+                    studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
+
+                    # If the Name or the Image is Hovered, Show the Full Name, Change the Colour, Calculate the new  XY Values
+                    if hoverObject(mousePos, studentImg, studentImgModifiedX, studentImgY) or \
+                       hoverObject(mousePos, studentNameImg, studentImgModifiedNameX, studentImgModifiedY):
+                        studentNameImg = createText(imgName, s=30, c=WHITE)
+                        studentNameImgC = YELLOW
+
+                        studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
+                        studentImgCentre = horizontalC(studentImg, mainSurface)
+
+                        studentImgModifiedNameX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
+                        studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
+
+                    # Draw the name
+                    createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
 
         pygame.display.flip()
 
