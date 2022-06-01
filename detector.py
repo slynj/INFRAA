@@ -35,7 +35,7 @@ def newFace(imgFile, faceName):
 
 # Counts the number of files in the img directory to see if there are any new students added
 def addFace():
-    global fileNum2, encodedImg
+    global fileNum2, encodedImg, currentFaces
 
     # ignore
     if os.path.exists("img/.DS_Store"):
@@ -52,6 +52,18 @@ def addFace():
 
                 encodedImg.append(imgList[i])
                 newFace(imgList[i].replace("'", ""), imgName)
+
+                currentFaces.append([imgName])
+                currentFaces[-1].append('Absent')
+                currentFaces[-1].append(currentTime())
+
+                record = currentFaces[-1][0] + '\n' + currentFaces[-1][1] + '\n' + str(currentFaces[-1][2]) + '\n'
+
+                if fileNum1 != len(open("data/time.txt", "r").readlines())/3:
+                    print("JJJJJLDKSJFLKSJD")
+                    file = open('data/time.txt', 'a')
+                    file.write(record)
+                    file.close()
 
         fileNum2 = fileNum1
 
@@ -77,7 +89,7 @@ def currentFace():
 
         for i in range(len(known_face_names)):
             currentFaces.append([known_face_names[i]])
-            currentFaces[i].append('False')
+            currentFaces[i].append('Absent')
             currentFaces[i].append(currentTime())
 
         if not os.path.exists('data/time.txt'):
@@ -93,8 +105,12 @@ def currentFace():
                 file.write(record)
                 file.close()
 
-    if len(known_face_names) != len(currentFaces):
-        currentFaces.append([known_face_names[-1]])
+    # if len(known_face_names) != len(currentFaces):
+    #     print(currentFaces)
+    #     currentFaces.append([known_face_names[-1]])
+    #     currentFaces[-1].append('Present')
+    #     currentFaces[-1].append(currentTime())
+    #     print(currentFaces)
 
 
 def dataFileExist(fileName):
@@ -102,10 +118,14 @@ def dataFileExist(fileName):
         open(f'data/{fileName}.txt', 'x')
 
 
+# dataFileExist('time')
+
+
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
-    addFace()
+
     currentFace()
+    addFace()
 
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -128,20 +148,19 @@ while True:
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
 
-            if True in matches:
-                first_match_index = matches.index(True)
-                name = known_face_names[first_match_index]
+            # if True in matches:
+            #     first_match_index = matches.index(True)
+            #     name = known_face_names[first_match_index]
 
-            # # Or instead, use the known face with the smallest distance to the new face
-            # face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            # best_match_index = np.argmin(face_distances)
-            # if matches[best_match_index]:
-            #     name = known_face_names[best_match_index]
+            # Or instead, use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                name = known_face_names[best_match_index]
 
             face_names.append(name)
 
             dataFileExist('time')
-            print(currentFaces)
 
             for i in range(len(currentFaces)):
 
@@ -157,10 +176,10 @@ while True:
                         recurringName = False
 
                         currentFaces[i][2] = currentTime()
-                        if presenceStored == 'True':
-                            currentFaces[i][1] = 'False'
-                        elif presenceStored == 'False':
-                            currentFaces[i][1] = 'True'
+                        if presenceStored == 'Present':
+                            currentFaces[i][1] = 'Absent'
+                        elif presenceStored == 'Absent':
+                            currentFaces[i][1] = 'Present'
 
                         # Update variable values
                         nameStored = currentFaces[i][0]
@@ -175,7 +194,6 @@ while True:
                         for line in file.readlines():
                             lineNum += 1
                             if line.find(name) >= 0:
-                                print("UPDATE")
                                 recurringName = True
                                 break
 
@@ -185,17 +203,17 @@ while True:
                             data = file.readlines()
                             data[lineNum] = presenceStored + '\n'
                             data[lineNum+1] = str(timeStored) + '\n'
+                            file.close()
 
                             file = open('data/time.txt', 'w')
                             file.writelines(data)
                             file.close()
 
-                        # Add new lines if its not a recurring name
-                        elif not recurringName:
-                            print("NEW")
-                            file = open('data/time.txt', 'a')
-                            file.write(record)
-                            file.close()
+                        # # Add new lines if its not a recurring name
+                        # else:
+                        #     file = open('data/time.txt', 'a')
+                        #     file.write(record)
+                        #     file.close()
 
     process_this_frame = not process_this_frame
 
