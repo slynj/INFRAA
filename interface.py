@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog as fd
 import shutil
 import os
+import time as t
 
 
 # Copies the selected image file and saves it to the 'img' directory for the detector
@@ -103,6 +104,12 @@ def main():
     logoImg = resizeImg('resource/logo.jpg', 4)
     logoHoverImg = resizeImg('resource/logoHover.jpg', 4)
     logoInit = logoImg
+    # Main Page Images
+    mainImg1 = resizeImg('resource/mainPage1.png', 1)
+    mainImg2 = resizeImg('resource/mainPage2.png', 1)
+    mainImg3 = resizeImg('resource/mainPage3.png', 1)
+    mainImg = mainImg1
+    mainImgTime1 = t.time()
 
     # TEXTS INIT #
     # Menu Header Texts
@@ -168,6 +175,8 @@ def main():
             logoInit = logoHoverImg
             if mouseUp:
                 programState = 'MAIN'
+                mainImg = mainImg1
+                mainImgTime1 = t.time()
         else:
             logoInit = logoImg
 
@@ -198,7 +207,18 @@ def main():
 
         # ——————— MAIN MENU ——————— #
         if programState == 'MAIN':
-            pass
+            # Display Diffrent Images Every 3 seconds
+            mainImgTime2 = t.time()
+            if (mainImgTime2 - mainImgTime1) > 3:
+                mainImgTime1 = mainImgTime2
+                if mainImg == mainImg1:
+                    mainImg = mainImg2
+                elif mainImg == mainImg2:
+                    mainImg = mainImg3
+                else:
+                    mainImg = mainImg1
+            mainSurface.blit(mainImg, (0, 70))
+
 
         # ——————— LOG MENU ——————— #
         if programState == 'LOG':
