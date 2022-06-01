@@ -157,14 +157,14 @@ def main():
         # Header
         pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
         # Logo
-        mainSurface.blit(logoInit, (5, 5))
+        mainSurface.blit(logoInit, (0, 0))
         # Menu Text
         mainSurface.blit(menuLogText, (350, 10))
         mainSurface.blit(menuAttendanceText, (550, 10))
         mainSurface.blit(menuClassText, (900, 10))
 
         # Logo Hover
-        if hoverObject(mousePos, logoInit, 5, 5):
+        if hoverObject(mousePos, logoInit, 0, 0):
             logoInit = logoHoverImg
             if mouseUp:
                 programState = 'MAIN'
