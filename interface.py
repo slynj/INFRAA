@@ -19,9 +19,8 @@ def fileCheck():
         print(f'Something went wrong: {e}')
 
 
+# Creates a button with the rendered text given
 def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
-    # paddingW = text.get_width() * 0.3
-    # paddingH = text.get_height() * 0.1
     paddingW = 15
     paddingH = 5
     dimension = [textX, textY, text.get_width() + paddingW, text.get_height() + paddingH]
@@ -51,8 +50,6 @@ def createText(t, f="tommy.otf", s=40, c=(58, 101, 139)):
 
 # Collision Detection for Rectangles (shapes, images, texts)
 def hoverObject(mouse, objects, objectX, objectY):
-    # paddingW = objects.get_width() * 0.3
-    # paddingH = objects.get_height() * 0.1
     paddingW = 15
     paddingH = 5
     dimension = [objectX, objectY, objects.get_width() + paddingW, objects.get_height() + paddingH]
@@ -65,8 +62,6 @@ def hoverObject(mouse, objects, objectX, objectY):
 
 def main():
     # -----------------------------Setup------------------------------------------------- #
-    #global fileList, programState, YELLOW, NAVY
-
     # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
     root = tk.Tk()
     root.withdraw()
@@ -126,18 +121,23 @@ def main():
     leftBttn = createText(' < ', s=30, c=WHITE)
     rightBttnC = DARKGRAY
     leftBttnC = DARKGRAY
+    # Help Button
+    helpBttn = createText(' ? ', s=30, c=WHITE)
+    helpBttnC = DARKGRAY
 
+    # MENU PAGES VARIABLES #
+    # Front / Back Page Control
     leftArrow = False
     rightArrow = False
-
+    # Page Num
     logPageNum = 0
     attPageNum = 0
     classPageNum = 0
 
-    # -----------------------------Main Game Loop---------------------------------------- #
+    # ----------------------------- Main Game Loop ---------------------------------------- #
 
     while True:
-        # -----------------------------Event Handling------------------------------------ #
+        # ----------------------------- Event Handling ------------------------------------ #
         ev = pygame.event.poll()
 
         if ev.type == pygame.QUIT:
@@ -169,8 +169,11 @@ def main():
         mainSurface.blit(menuLogText, (350, 10))
         mainSurface.blit(menuAttendanceText, (550, 10))
         mainSurface.blit(menuClassText, (900, 10))
+        # Help Button
+        createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
 
         # Logo Hover
+        # MAIN hover / click
         if hoverObject(mousePos, logoInit, 0, 0):
             logoInit = logoHoverImg
             if mouseUp:
@@ -181,6 +184,7 @@ def main():
             logoInit = logoImg
 
         # Menu Text Hover
+        # LOG hover/ click
         if hoverObject(mousePos, menuLogText, 350, 10):
             menuLogText = createText('Log', c=NAVY)
             if mouseUp:
@@ -189,6 +193,7 @@ def main():
         else:
             menuLogText = createText('Log', c=BLUE)
 
+        # ATTENDANCE hover / click
         if hoverObject(mousePos, menuAttendanceText, 550, 10):
             menuAttendanceText = createText('Attendance', c=NAVY)
             if mouseUp:
@@ -197,6 +202,7 @@ def main():
         else:
             menuAttendanceText = createText('Attendance', c=BLUE)
 
+        # CLASS hover / click
         if hoverObject(mousePos, menuClassText, 900, 10):
             menuClassText = createText('Class', c=NAVY)
             if mouseUp:
@@ -204,6 +210,17 @@ def main():
                 classPageNum = 0
         else:
             menuClassText = createText('Class', c=BLUE)
+
+        # HELP hover / click
+        if hoverObject(mousePos, helpBttn, 1100, 10):
+            helpBttnC = GRAY
+            createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
+            if mouseUp:
+                programState = 'HELP'
+        else:
+            helpBttnC = DARKGRAY
+            createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
+
 
         # ——————— MAIN MENU ——————— #
         if programState == 'MAIN':
@@ -218,7 +235,6 @@ def main():
                 else:
                     mainImg = mainImg1
             mainSurface.blit(mainImg, (0, 70))
-
 
         # ——————— LOG MENU ——————— #
         if programState == 'LOG':
@@ -410,7 +426,7 @@ def main():
                     # Change X and Y of the Img Depending on their index Number
                     if attElementNum > 4:
                         attElementNum -= 5
-                        studentImgY = 470
+                        studentImgY = 460
                     else:
                         studentImgY = 150
 
@@ -611,6 +627,10 @@ def main():
 
                     # Draw the name
                     createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
+
+        # ——————— HELP MENU ——————— #
+        if programState == 'HELP':
+            pass
 
         pygame.display.flip()
 
