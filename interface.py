@@ -63,6 +63,7 @@ def hoverObject(mouse, objects, objectX, objectY):
 # Page Control by Buttons / Keys
 def pageControl(mainSurface, mousePos, pageNums):
     global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY
+    # Left / Right Keyboard Detection
     if leftArrow:
         pageNums -= 1
         leftArrow = False
@@ -70,6 +71,7 @@ def pageControl(mainSurface, mousePos, pageNums):
         pageNums += 1
         rightArrow = False
 
+    # Arrow Buttons Hover Detection
     leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
     rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
 
@@ -104,34 +106,27 @@ def pageNumDisplay(mainSurface, curretNum, maxNum):
     mainSurface.blit(MaxPageNum, (620, 768))
 
 
-# # Remove All Files that Does Not end in .jpg .png and .jpeg
-# def removeFiles():
-#     files = os.listdir("img/")
-#
-#     for file in files:
-#         if not file.endswith((".jpg", ".png", "jpeg")):
-#             files.remove(file)
-
-
+# Removes .DS_Store Files that are Automatically Created
 def removeDS():
     global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
     if os.path.exists("img/.DS_Store"):
         os.remove("img/.DS_Store")
 
 
+# If the Face was not Detected and the imgStatus.txt was created by the detector, display an Error Window
 def nonFace():
     global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
-
-# If the Face was not Detected and the imgStatus.txt was created by the detector, display an Error Window
+    # Read the file from the Detector
     if os.path.exists("data/imgStatus.txt"):
         f = open('data/imgStatus.txt', 'r')
         imgStatus = f.read()
-
         f.close()
+    # If the image is unrecognizable
     if imgStatus == 'ImageNR':
+        # Error Window
         mainSurface.blit(errorImg, (horizontalC(errorImg, mainSurface), 200))
         mainSurface.blit(xBttn, (950, 205))
-
+        # Closing Button
         if hoverObject(mousePos, xBttn, 950, 205):
             xBttn = createText('x', s=50, c=RED)
             if mouseUp:
@@ -144,10 +139,11 @@ def nonFace():
 
 def main():
     # -----------------------------Setup------------------------------------------------- #
-    # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
     global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY, BLUE, \
         mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
 
+    # initial setting for tk window (browsing)
+    # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
     root = tk.Tk()
     root.withdraw()
     if root.wm_state() == 'withdrawn':
@@ -288,6 +284,7 @@ def main():
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
 
+            # Wait until the detector finishes writing on the file
             if os.path.exists('data/time.txt'):
                 f = open('data/time.txt', 'r')
                 lines = len(f.readlines())
@@ -702,8 +699,6 @@ def main():
 
                     # Draw the name
                     createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
-
-
 
         # ——————— HELP MENU ——————— #
         if programState == 'HELP':
