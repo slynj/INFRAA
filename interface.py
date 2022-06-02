@@ -217,20 +217,20 @@ def nonFace():
         f = open('data/imgStatus.txt', 'r')
         imgStatus = f.read()
         f.close()
-    # If the image is unrecognizable
-    if imgStatus == 'ImageNR':
-        # Error Window
-        mainSurface.blit(errorImg, (horizontalC(errorImg, mainSurface), 200))
-        mainSurface.blit(xBttn, (950, 205))
-        # Closing Button
-        if hoverObject(mousePos, xBttn, 950, 205):
-            xBttn = createText('x', s=50, c=RED)
-            if mouseUp:
-                f = open('data/imgStatus.txt', 'w')
-                f.write('')
-                f.close()
-        else:
-            xBttn = createText('x', s=50, c=BLACK)
+        # If the image is unrecognizable
+        if imgStatus == 'ImageNR':
+            # Error Window
+            mainSurface.blit(errorImg, (horizontalC(errorImg, mainSurface), 200))
+            mainSurface.blit(xBttn, (950, 205))
+            # Closing Button
+            if hoverObject(mousePos, xBttn, 950, 205):
+                xBttn = createText('x', s=50, c=RED)
+                if mouseUp:
+                    f = open('data/imgStatus.txt', 'w')
+                    f.write('')
+                    f.close()
+            else:
+                xBttn = createText('x', s=50, c=BLACK)
 
 
 def main():
@@ -333,6 +333,21 @@ def main():
     logPageNum = 0
     attPageNum = 0
     classPageNum = 0
+
+    # Reset Files
+    if os.path.exists('data/time.txt'):
+        os.remove('data/time.txt')
+
+    file = open('data/time.txt', 'x')
+    file.close()
+    if os.path.exists('data/imgStatus.txt'):
+        os.remove('data/imgStatus.txt')
+
+    file = open('data/imgStatus.txt', 'x')
+    file.close()
+    file = open('data/imgStatus.txt', 'w')
+    file.write('')
+    file.close()
 
     # ----------------------------- Main Game Loop ---------------------------------------- #
 
@@ -755,46 +770,53 @@ def main():
                         if classElementNum == 0:
                             studentImgX = 100
 
-                    # Student Images Display
-                    studentImg = pygame.image.load('img/' + imgList[i]).convert_alpha()
-                    studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
+                    nonFace()
 
-                    studentImgModifiedX = studentImgX + classElementNum * 200
-                    mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
+                    f = open('data/imgStatus.txt', 'r')
+                    imgStatus = f.read()
+                    f.close()
 
-                    # Get the Student Name from the Img File Name
-                    base = os.path.basename(f'img/{imgList[i]}')
-                    imgName = os.path.splitext(base)[0]
+                    if imgStatus != 'ImageNR':
+                        # Student Images Display
+                        studentImg = pygame.image.load('img/' + imgList[i]).convert_alpha()
+                        studentImg = pygame.transform.smoothscale(studentImg, (160, 200))
 
-                    studentNameImg = createText(imgName, s=30, c=WHITE)
-                    studentNameImgC = BLUE
+                        studentImgModifiedX = studentImgX + classElementNum * 200
+                        mainSurface.blit(studentImg, (studentImgModifiedX, studentImgY))
 
-                    # If the Name is Longer than the Image Display Size, Only Show First Name
-                    if studentNameImg.get_width() >= 160:
-                        nameSplit = imgName.split(" ", 1)
-                        nameShort = nameSplit[0]
-                        studentNameImg = createText(nameShort, s=30, c=WHITE)
+                        # Get the Student Name from the Img File Name
+                        base = os.path.basename(f'img/{imgList[i]}')
+                        imgName = os.path.splitext(base)[0]
 
-                    # Calculate the Centre X / Y Values for the Names
-                    studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
-                    studentImgCentre = horizontalC(studentImg, mainSurface)
-                    studentImgModifiedNameX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
-                    studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
-
-                    # If the Name or the Image is Hovered, Show the Full Name, Change the Colour, Calculate the new  XY Values
-                    if hoverObject(mousePos, studentImg, studentImgModifiedX, studentImgY) or \
-                       hoverObject(mousePos, studentNameImg, studentImgModifiedNameX, studentImgModifiedY):
                         studentNameImg = createText(imgName, s=30, c=WHITE)
-                        studentNameImgC = YELLOW
+                        studentNameImgC = BLUE
 
+                        # If the Name is Longer than the Image Display Size, Only Show First Name
+                        if studentNameImg.get_width() >= 160:
+                            nameSplit = imgName.split(" ", 1)
+                            nameShort = nameSplit[0]
+                            studentNameImg = createText(nameShort, s=30, c=WHITE)
+
+                        # Calculate the Centre X / Y Values for the Names
                         studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
                         studentImgCentre = horizontalC(studentImg, mainSurface)
-
                         studentImgModifiedNameX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
                         studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
 
-                    # Draw the name
-                    createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
+                        # If the Name or the Image is Hovered, Show the Full Name, Change the Colour, Calculate the new  XY Values
+                        if hoverObject(mousePos, studentImg, studentImgModifiedX, studentImgY) or \
+                           hoverObject(mousePos, studentNameImg, studentImgModifiedNameX, studentImgModifiedY):
+                            studentNameImg = createText(imgName, s=30, c=WHITE)
+                            studentNameImgC = YELLOW
+
+                            studentNameImgCentre = horizontalC(studentNameImg, mainSurface) - 7
+                            studentImgCentre = horizontalC(studentImg, mainSurface)
+
+                            studentImgModifiedNameX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
+                            studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
+
+                        # Draw the name
+                        createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
 
         # ——————— HELP MENU ——————— #
         if programState == 'HELP':

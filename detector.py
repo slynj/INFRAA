@@ -23,8 +23,6 @@ currentFaces = []
 def newFace(imgFile, faceName):
     global faceEncoding
     # Status Shared with the Interface
-    dataFileExist('imgStatus')
-
     image = face_recognition.load_image_file(f"img/{imgFile}")
     try:
         faceEncoding = face_recognition.face_encodings(image)[0]
@@ -32,6 +30,7 @@ def newFace(imgFile, faceName):
     except IndexError as error:
         os.remove(f"img/{imgFile}")
         f = open('data/imgStatus.txt', 'w')
+        print("JDOJFOSDJFJOSDFJOISDJOI")
         f.write('ImageNR')
         f.close()
         return True
@@ -92,29 +91,47 @@ def programInit():
     if initial:
         initial = False
 
-        if os.path.exists('data/time.txt'):
-            file = open('data/time.txt', 'r')
-            fileLines = file.readlines()
+        # if os.path.exists('data/time.txt'):
+        #     os.remove('data/time.txt')
+        #
+        # file = open('data/time.txt', 'x')
+        # file.close()
+
+        for i in range(len(knownFaceNames)):
+            currentFaces.append([knownFaceNames[i]])
+            currentFaces[i].append('Absent')
+            currentFaces[i].append(currentTime())
+
+        for j in range(len(currentFaces)):
+            nameStored = currentFaces[j][0]
+            presenceStored = currentFaces[j][1]
+            timeStored = currentFaces[j][2]
+
+            record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
+
+            file = open('data/time.txt', 'a')
+            file.write(record)
             file.close()
-            if fileLines == 0:
-                for i in range(len(knownFaceNames)):
-                    currentFaces.append([knownFaceNames[i]])
-                    currentFaces[i].append('Absent')
-                    currentFaces[i].append(currentTime())
-                    print(currentFaces[i])
 
-        else:
-            dataFileExist('time')
-            for j in range(len(currentFaces)):
-                nameStored = currentFaces[j][0]
-                presenceStored = currentFaces[j][1]
-                timeStored = currentFaces[j][2]
 
-                record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
 
-                file = open('data/time.txt', 'a')
-                file.write(record)
-                file.close()
+
+        # if os.path.exists('data/time.txt'):
+        #     file = open('data/time.txt', 'r')
+        #     fileLines = file.readlines()
+        #     file.close()
+        #     if fileLines == 0:
+        #         for i in range(len(knownFaceNames)):
+        #             currentFaces.append([knownFaceNames[i]])
+        #             currentFaces[i].append('Absent')
+        #             currentFaces[i].append(currentTime())
+        #             print(currentFaces[i])
+
+        # else:
+        #     dataFileExist('time')
+
+
+
 
 
 # Check if the File / Path Exists. If Not, Create it
