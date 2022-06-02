@@ -25,6 +25,7 @@
 #       -> efficiently divides jobs for each scripts
 #   - file manipulations
 #       -> dynamically read/write/store data to display the information
+#       -> also use it to communicate between two scripts
 #   - adding new student
 #       -> new students can be added to the attendance program with just one picture
 #   - dynamic buttons / collision detection
@@ -46,6 +47,10 @@
 #       -> effectively used for loops especially for displaying the images
 #   - created custom functions
 #       -> created many custom functions that are used throughout the program
+#   - finds default webcam
+#       -> finds a default webcam that would be used for the detector
+#       -> from camera 0, finds the camera number that suits the program
+
 # -----------------------------------------------------------------------------
 from threading import Thread
 import subprocess

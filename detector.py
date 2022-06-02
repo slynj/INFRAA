@@ -19,8 +19,17 @@ initial = True
 currentFaces = []
 
 
-# Adds a new face and name
 def newFace(imgFile, faceName):
+    """
+    Adds a new face and name
+
+    :param imgFile: str
+        name of the student image file to be loaded
+    :param faceName: str
+        name of the student face
+    :return: bool, str
+        True if the face is not recongized, face name if the face is recognized
+    """
     global faceEncoding
     # Status Shared with the Interface
     image = face_recognition.load_image_file(f"img/{imgFile}")
@@ -30,7 +39,6 @@ def newFace(imgFile, faceName):
     except IndexError as error:
         os.remove(f"img/{imgFile}")
         f = open('data/imgStatus.txt', 'w')
-        print("JDOJFOSDJFJOSDFJOISDJOI")
         f.write('ImageNR')
         f.close()
         return True
@@ -39,8 +47,13 @@ def newFace(imgFile, faceName):
     knownFaceNames.append(faceName)
 
 
-# Counts the number of files in the img directory to see if there are any new students added
 def addFace():
+    """
+    Counts the number of files in the img directory to see if there are any new students added
+
+    :return:
+        None
+    """
     global fileNum2, encodedImg, currentFaces
 
     # Remove DS_Store Files
@@ -76,32 +89,38 @@ def addFace():
         fileNum2 = fileNum1
 
 
-# Return the current time in YYYY-MM-DD HH:MM:SS format
 def currentTime():
+    """
+    Return the current time in YYYY-MM-DD HH:MM:SS format
+
+    :return: datetime
+        the current time in YYYY-MM-DD HH:MM:SS format
+    """
     today = date.today()
     now = datetime.now()
     currentTimes = time(now.hour, now.minute, now.second)
     return datetime.combine(today, currentTimes)
 
 
-# time.txt File Initialize
 def programInit():
+    """
+    Program Files and Lists Initialize
+
+    :return:
+        None
+    """
     global initial, currentFaces
 
     if initial:
         initial = False
 
-        # if os.path.exists('data/time.txt'):
-        #     os.remove('data/time.txt')
-        #
-        # file = open('data/time.txt', 'x')
-        # file.close()
-
+        # Collect Data and append it to a list
         for i in range(len(knownFaceNames)):
             currentFaces.append([knownFaceNames[i]])
             currentFaces[i].append('Absent')
             currentFaces[i].append(currentTime())
 
+        # Write Data on the FIle
         for j in range(len(currentFaces)):
             nameStored = currentFaces[j][0]
             presenceStored = currentFaces[j][1]
@@ -114,33 +133,20 @@ def programInit():
             file.close()
 
 
-
-
-        # if os.path.exists('data/time.txt'):
-        #     file = open('data/time.txt', 'r')
-        #     fileLines = file.readlines()
-        #     file.close()
-        #     if fileLines == 0:
-        #         for i in range(len(knownFaceNames)):
-        #             currentFaces.append([knownFaceNames[i]])
-        #             currentFaces[i].append('Absent')
-        #             currentFaces[i].append(currentTime())
-        #             print(currentFaces[i])
-
-        # else:
-        #     dataFileExist('time')
-
-
-
-
-
-# Check if the File / Path Exists. If Not, Create it
 def dataFileExist(fileName):
+    """
+    Check if the File / Path Exists. If Not, Create it
+
+    :param fileName: str
+        name of the file to check
+    :return:
+        None
+    """
     if not os.path.exists(f'data/{fileName}.txt'):
         open(f'data/{fileName}.txt', 'x')
 
 
-# Set default webcam
+# Set default webcam,
 videoCapture = cv2.VideoCapture(0)
 ret, frame = videoCapture.read()
 if frame is None:
