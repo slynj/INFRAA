@@ -201,8 +201,13 @@ def main():
     helpMFImg = helpMFImg1
     # Error Message Images
     errorImg = resizeImg('resource/error.png', 1)
-    # Loading Screen Image
-    loadImg = resizeImg('resource/loading.png', 1)
+    # Loading Screen Images
+    loadImg1 = resizeImg('resource/loading1.png', 1)
+    loadImg2 = resizeImg('resource/loading2.png', 1)
+    loadImg3 = resizeImg('resource/loading3.png', 1)
+    loadImg4 = resizeImg('resource/loading4.png', 1)
+    loadImg5 = resizeImg('resource/loading5.png', 1)
+    imgNum = 0
 
     # TEXTS INIT #
     # Menu Header Texts
@@ -268,7 +273,17 @@ def main():
         if programState == 'LOAD':
             # Background
             mainSurface.fill(LIGHTGRAY)
-            mainSurface.blit(loadImg, (0, 0))
+            # Loading Image List
+            loadImgList = [loadImg1, loadImg2, loadImg3, loadImg4, loadImg5]
+            # Update Time
+            mainImgTime2 = t.time()
+            # Change Img Every Second
+            if (mainImgTime2 - mainImgTime1) > 1:
+                imgNum += 1
+                mainImgTime1 = mainImgTime2
+            if imgNum > 4:
+                imgNum = 0
+            mainSurface.blit(loadImgList[imgNum], (0, 0))
 
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
