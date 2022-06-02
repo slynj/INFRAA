@@ -4,95 +4,101 @@ import numpy as np
 import os
 from datetime import date, time, datetime, timedelta
 
+global fileNum2, encodedImg, faceEncoding, faceNames, initial, currentFaces
 
-global fileNum2, encodedImg, face_names
-
-# Set default webcam
-video_capture = cv2.VideoCapture(1)
-
-# Initialize some variables
+# Initialize Variables
 fileNum2 = 0
 encodedImg = []
-
-# Create arrays of known face encodings and their names
-known_face_encodings = []
-known_face_names = []
-
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
+processThisFrame = True
+knownFaceEncodings = []
+knownFaceNames = []
+faceLocations = []
+faceEncodings = []
+faceNames = []
+initial = True
+currentFaces = []
 
 
 # Adds a new face and name
 def newFace(imgFile, faceName):
+    global faceEncoding
     image = face_recognition.load_image_file(f"img/{imgFile}")
-    faceEncoding = face_recognition.face_encodings(image)[0]
+    try:
+        faceEncoding = face_recognition.face_encodings(image)[0]
+    # Face Not Recognized From the Image
+    except IndexError as error:
+        os.remove(f"img/{imgFile}")
+        #FILE CHECKING#
+        return True
 
-    known_face_encodings.append(faceEncoding)
-    known_face_names.append(faceName)
+    knownFaceEncodings.append(faceEncoding)
+    knownFaceNames.append(faceName)
 
 
 # Counts the number of files in the img directory to see if there are any new students added
 def addFace():
     global fileNum2, encodedImg, currentFaces
 
-    # ignore
+    # Remove DS_Store Files
     if os.path.exists("img/.DS_Store"):
         os.remove("img/.DS_Store")
 
     fileNum1 = len(os.listdir('img/'))
 
+    # New Images are added
     if fileNum1 != fileNum2:
         imgList = os.listdir('img/')
+        # Append to lists and time.txt
         for i in range(fileNum1):
             if imgList[i] not in encodedImg:
                 base = os.path.basename(f'img/{imgList[i]}')
                 imgName = os.path.splitext(base)[0]
 
                 encodedImg.append(imgList[i])
-                newFace(imgList[i].replace("'", ""), imgName)
+                newFaceRecog = newFace(imgList[i].replace("'", ""), imgName)
 
-                currentFaces.append([imgName])
-                currentFaces[-1].append('Absent')
-                currentFaces[-1].append(currentTime())
+                if not newFaceRecog:
+                    currentFaces.append([imgName])
+                    currentFaces[-1].append('Absent')
+                    currentFaces[-1].append(currentTime())
 
-                record = currentFaces[-1][0] + '\n' + currentFaces[-1][1] + '\n' + str(currentFaces[-1][2]) + '\n'
+                    record = currentFaces[-1][0] + '\n' + currentFaces[-1][1] + '\n' + str(currentFaces[-1][2]) + '\n'
 
-                if fileNum1 != len(open("data/time.txt", "r").readlines())/3:
-                    print("JJJJJLDKSJFLKSJD")
-                    file = open('data/time.txt', 'a')
-                    file.write(record)
-                    file.close()
+                    if fileNum1 != len(open("data/time.txt", "r").readlines())/3:
+                        file = open('data/time.txt', 'a')
+                        file.write(record)
+                        file.close()
 
         fileNum2 = fileNum1
 
 
+# Return the current time in YYYY-MM-DD HH:MM:SS format
 def currentTime():
-    """ Return the current time in YYYY-MM-DD HH:MM:SS format """
     today = date.today()
     now = datetime.now()
-    current_time = time(now.hour, now.minute, now.second)
-    return datetime.combine(today, current_time)
+    currentTimes = time(now.hour, now.minute, now.second)
+    return datetime.combine(today, currentTimes)
 
 
-global initial, currentFaces
-initial = True
-currentFaces = []
-
-
-def currentFace():
+# time.txt File Initialize
+def programInit():
     global initial, currentFaces
 
     if initial:
         initial = False
 
-        for i in range(len(known_face_names)):
-            currentFaces.append([known_face_names[i]])
-            currentFaces[i].append('Absent')
-            currentFaces[i].append(currentTime())
+        if os.path.exists('data/time.txt'):
+            file = open('data/time.txt', 'r')
+            fileLines = file.readlines()
+            file.close()
+            if fileLines == 0:
+                for i in range(len(knownFaceNames)):
+                    currentFaces.append([knownFaceNames[i]])
+                    currentFaces[i].append('Absent')
+                    currentFaces[i].append(currentTime())
+                    print(currentFaces[i])
 
-        if not os.path.exists('data/time.txt'):
+        else:
             dataFileExist('time')
             for j in range(len(currentFaces)):
                 nameStored = currentFaces[j][0]
@@ -105,60 +111,53 @@ def currentFace():
                 file.write(record)
                 file.close()
 
-    # if len(known_face_names) != len(currentFaces):
-    #     print(currentFaces)
-    #     currentFaces.append([known_face_names[-1]])
-    #     currentFaces[-1].append('Present')
-    #     currentFaces[-1].append(currentTime())
-    #     print(currentFaces)
 
-
+# Check if the File / Path Exists. If Not, Create it
 def dataFileExist(fileName):
     if not os.path.exists(f'data/{fileName}.txt'):
         open(f'data/{fileName}.txt', 'x')
 
 
-# dataFileExist('time')
-
+# Set default webcam
+videoCapture = cv2.VideoCapture(0)
+ret, frame = videoCapture.read()
+if frame is None:
+    videoCapture = cv2.VideoCapture(1)
 
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
 
-    currentFace()
+    programInit()
     addFace()
 
     # Grab a single frame of video
-    ret, frame = video_capture.read()
+    ret, frame = videoCapture.read()
 
     # Resize frame of video to 1/4 size for faster face recognition processing
-    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+    smallFrame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-    rgb_small_frame = small_frame[:, :, ::-1]
+    rgbSmallFrame = smallFrame[:, :, ::-1]
 
     # Only process every other frame of video to save time
-    if process_this_frame:
+    if processThisFrame:
         # Find all the faces and face encodings in the current frame of video
-        face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        faceLocations = face_recognition.face_locations(rgbSmallFrame)
+        faceEncodings = face_recognition.face_encodings(rgbSmallFrame, faceLocations)
 
-        face_names = []
-        for face_encoding in face_encodings:
+        faceNames = []
+        for faceEncoding in faceEncodings:
             # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            matches = face_recognition.compare_faces(knownFaceEncodings, faceEncoding)
             name = "Unknown"
 
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_face_names[first_match_index]
-
             # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+            faceDistances = face_recognition.face_distance(knownFaceEncodings, faceEncoding)
+            bestMatchIndex = np.argmin(faceDistances)
+            if matches[bestMatchIndex]:
+                name = knownFaceNames[bestMatchIndex]
 
-            face_names.append(name)
+            faceNames.append(name)
 
             dataFileExist('time')
 
@@ -209,16 +208,10 @@ while True:
                             file.writelines(data)
                             file.close()
 
-                        # # Add new lines if its not a recurring name
-                        # else:
-                        #     file = open('data/time.txt', 'a')
-                        #     file.write(record)
-                        #     file.close()
-
-    process_this_frame = not process_this_frame
+    processThisFrame = not processThisFrame
 
     # Display the results
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
+    for (top, right, bottom, left), name in zip(faceLocations, faceNames):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
         top *= 4
         right *= 4
@@ -234,12 +227,12 @@ while True:
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
-    cv2.imshow('Video', frame)
+    cv2.imshow('INFRAA Detector', frame)
 
-    # Hit 'q' on the keyboard to quit!
+    # Hit 'q' on the keyboard to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 # Release handle to the webcam
-video_capture.release()
+videoCapture.release()
 cv2.destroyAllWindows()
