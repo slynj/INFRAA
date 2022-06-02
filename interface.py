@@ -114,14 +114,39 @@ def pageNumDisplay(mainSurface, curretNum, maxNum):
 
 
 def removeDS():
+    global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
     if os.path.exists("img/.DS_Store"):
         os.remove("img/.DS_Store")
+
+
+def nonFace():
+    global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
+
+# If the Face was not Detected and the imgStatus.txt was created by the detector, display an Error Window
+    if os.path.exists("data/imgStatus.txt"):
+        f = open('data/imgStatus.txt', 'r')
+        imgStatus = f.read()
+
+        f.close()
+    if imgStatus == 'ImageNR':
+        mainSurface.blit(errorImg, (horizontalC(errorImg, mainSurface), 200))
+        mainSurface.blit(xBttn, (950, 205))
+
+        if hoverObject(mousePos, xBttn, 950, 205):
+            xBttn = createText('x', s=50, c=RED)
+            if mouseUp:
+                f = open('data/imgStatus.txt', 'w')
+                f.write('')
+                f.close()
+        else:
+            xBttn = createText('x', s=50, c=BLACK)
 
 
 def main():
     # -----------------------------Setup------------------------------------------------- #
     # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
-    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY, BLUE
+    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY, BLUE, \
+        mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
 
     root = tk.Tk()
     root.withdraw()
@@ -133,6 +158,7 @@ def main():
     pygame.display.set_caption("INFRAA")
 
     # -----------------------------Program Variable Initialization----------------------- #
+    # Surface Size
     surfaceSizeX = 1200
     surfaceSizeY = 800
 
@@ -152,8 +178,8 @@ def main():
     GREEN = (88, 168, 112)
     RED = (194, 62, 62)
 
-    # Program State (MAIN, LOG, ATTENDANCE, CLASS)
-    programState = "MAIN"
+    # Program State (LOAD, MAIN, LOG, ATTENDANCE, CLASS, HELP)
+    programState = "LOAD"
 
     # IMAGES INIT #
     # Logo Images
@@ -173,12 +199,18 @@ def main():
     helpMFImg3 = resizeImg('resource/helpMF3.png', 1)
     helpHWImg = resizeImg('resource/helpHW.png', 1)
     helpMFImg = helpMFImg1
+    # Error Message Images
+    errorImg = resizeImg('resource/error.png', 1)
+    # Loading Screen Image
+    loadImg = resizeImg('resource/loading.png', 1)
 
     # TEXTS INIT #
     # Menu Header Texts
     menuLogText = createText('Log')
     menuAttendanceText = createText('Attendance')
     menuClassText = createText('Class')
+    # Error Window Texts
+    xBttn = createText('x', s=50, c=BLACK)
 
     # BUTTONS INIT #
     # Add Student Button
@@ -232,69 +264,88 @@ def main():
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
-        # ——————— MENU BAR GRAPHICS ——————— #
-        # Background
-        mainSurface.fill(LIGHTGRAY)
-        # Header
-        pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
-        # Logo
-        mainSurface.blit(logoInit, (0, 0))
-        # Menu Text
-        mainSurface.blit(menuLogText, (350, 10))
-        mainSurface.blit(menuAttendanceText, (550, 10))
-        mainSurface.blit(menuClassText, (900, 10))
-        # Help Button
-        createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
+        # ——————— LOG MENU ——————— #
+        if programState == 'LOAD':
+            # Background
+            mainSurface.fill(LIGHTGRAY)
+            mainSurface.blit(loadImg, (0, 0))
 
-        # Logo Hover
-        # MAIN hover / click
-        if hoverObject(mousePos, logoInit, 0, 0):
-            logoInit = logoHoverImg
-            if mouseUp:
-                programState = 'MAIN'
-                mainImg = mainImg1
-                mainImgTime1 = t.time()
+            imgList = os.listdir('img/')
+            imgListLen = len(imgList)
+
+            if os.path.exists('data/time.txt'):
+                f = open('data/time.txt', 'r')
+                lines = len(f.readlines())
+
+                if lines >= 3 * imgListLen:
+                    programState = 'MAIN'
+                    mainImg = mainImg1
+                    mainImgTime1 = t.time()
+
         else:
-            logoInit = logoImg
-
-        # Menu Text Hover
-        # LOG hover/ click
-        if hoverObject(mousePos, menuLogText, 350, 10):
-            menuLogText = createText('Log', c=NAVY)
-            if mouseUp:
-                programState = 'LOG'
-                logPageNum = 0
-        else:
-            menuLogText = createText('Log', c=BLUE)
-
-        # ATTENDANCE hover / click
-        if hoverObject(mousePos, menuAttendanceText, 550, 10):
-            menuAttendanceText = createText('Attendance', c=NAVY)
-            if mouseUp:
-                programState = 'ATTENDANCE'
-                attPageNum = 0
-        else:
-            menuAttendanceText = createText('Attendance', c=BLUE)
-
-        # CLASS hover / click
-        if hoverObject(mousePos, menuClassText, 900, 10):
-            menuClassText = createText('Class', c=NAVY)
-            if mouseUp:
-                programState = 'CLASS'
-                classPageNum = 0
-        else:
-            menuClassText = createText('Class', c=BLUE)
-
-        # HELP hover / click
-        if hoverObject(mousePos, helpBttn, 1140, 16):
-            helpBttnC = GRAY
+            # ——————— MENU BAR GRAPHICS ——————— #
+            # Background
+            mainSurface.fill(LIGHTGRAY)
+            # Header
+            pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
+            # Logo
+            mainSurface.blit(logoInit, (0, 0))
+            # Menu Text
+            mainSurface.blit(menuLogText, (350, 10))
+            mainSurface.blit(menuAttendanceText, (550, 10))
+            mainSurface.blit(menuClassText, (900, 10))
+            # Help Button
             createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
-            if mouseUp:
-                programState = 'HELP'
-                helpState = 'FAQ'
-        else:
-            helpBttnC = DARKGRAY
-            createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
+
+            # Logo Hover
+            # MAIN hover / click
+            if hoverObject(mousePos, logoInit, 0, 0):
+                logoInit = logoHoverImg
+                if mouseUp:
+                    programState = 'MAIN'
+                    mainImg = mainImg1
+                    mainImgTime1 = t.time()
+            else:
+                logoInit = logoImg
+
+            # Menu Text Hover
+            # LOG hover/ click
+            if hoverObject(mousePos, menuLogText, 350, 10):
+                menuLogText = createText('Log', c=NAVY)
+                if mouseUp:
+                    programState = 'LOG'
+                    logPageNum = 0
+            else:
+                menuLogText = createText('Log', c=BLUE)
+
+            # ATTENDANCE hover / click
+            if hoverObject(mousePos, menuAttendanceText, 550, 10):
+                menuAttendanceText = createText('Attendance', c=NAVY)
+                if mouseUp:
+                    programState = 'ATTENDANCE'
+                    attPageNum = 0
+            else:
+                menuAttendanceText = createText('Attendance', c=BLUE)
+
+            # CLASS hover / click
+            if hoverObject(mousePos, menuClassText, 900, 10):
+                menuClassText = createText('Class', c=NAVY)
+                if mouseUp:
+                    programState = 'CLASS'
+                    classPageNum = 0
+            else:
+                menuClassText = createText('Class', c=BLUE)
+
+            # HELP hover / click
+            if hoverObject(mousePos, helpBttn, 1140, 16):
+                helpBttnC = GRAY
+                createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
+                if mouseUp:
+                    programState = 'HELP'
+                    helpState = 'FAQ'
+            else:
+                helpBttnC = DARKGRAY
+                createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
 
         # ——————— MAIN MENU ——————— #
         if programState == 'MAIN':
@@ -352,14 +403,7 @@ def main():
                         lastElement = 8 * logPageNum + 8
 
                 # Current Page / Max Page Display
-                pageNumDisplay(mainSurface, logPageNum, maxPage)
-
-                # currentPageNum = createText(str(logPageNum + 1), s=15, c=BLUE)
-                # MaxPageNum = createText(str(maxPage + 1), s=15, c=BLUE)
-                # slash = createText('/', s=15, c=BLUE)
-                # mainSurface.blit(currentPageNum, (570, 768))
-                # mainSurface.blit(slash, (595, 768))
-                # mainSurface.blit(MaxPageNum, (620, 768))
+                pageNumDisplay(mainSurface, int(logPageNum), int(maxPage))
 
                 # file content checking
                 f = open("data/time.txt", "r")  # Open the file
@@ -450,7 +494,7 @@ def main():
                         attLastElement = 10 * attPageNum + 10
 
                 # Current Page / Max Page Display
-                pageNumDisplay(mainSurface, attPageNum, attMaxPage)
+                pageNumDisplay(mainSurface, int(attPageNum), int(attMaxPage))
 
                 # file content checking
                 f = open("data/time.txt", "r")  # Open the file
@@ -489,6 +533,7 @@ def main():
                             fileList.append(fileLists[j + 1].strip())
                     f.close()  # Close the file
 
+
                     studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
 
                     if fileList[i] == 'Absent':
@@ -526,9 +571,6 @@ def main():
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
             menuClassText = createText('Class', c=NAVY)
-
-            # if os.path.exists("img/.DS_Store"):
-            #     os.remove("img/.DS_Store")
 
             # Add Button Draw & Collision Detection
             dimensionAddBttn = [100, 150, addBttn.get_width() + 100, addBttn.get_height() + 165]
@@ -581,7 +623,7 @@ def main():
                         classLastElement = 9 * classPageNum + 9
 
                 # Current Page / Max Page Display
-                pageNumDisplay(mainSurface, classPageNum, classMaxPage)
+                pageNumDisplay(mainSurface, int(classPageNum), int(classMaxPage))
 
                 # file content checking
                 f = open("data/time.txt", "r")  # Open the file
@@ -646,6 +688,8 @@ def main():
                     # Draw the name
                     createBttn(mainSurface, studentNameImg, studentImgModifiedNameX, studentImgModifiedY, studentNameImgC)
 
+
+
         # ——————— HELP MENU ——————— #
         if programState == 'HELP':
             # Menu Indication (—)
@@ -678,7 +722,7 @@ def main():
                     helpMFPageNum = 0
 
                 # Current Page / Max Page Display
-                pageNumDisplay(mainSurface, helpMFPageNum, 2)
+                pageNumDisplay(mainSurface, int(helpMFPageNum), 2)
 
                 # Set the Image to Display According to the Page Number
                 helpMFImg = helpMFPageList[helpMFPageNum]
@@ -724,6 +768,7 @@ def main():
             mainSurface.blit(helpMFBttn, (450, 100))
             mainSurface.blit(helpHW, (850, 100))
 
+        nonFace()
         pygame.display.flip()
 
         clock.tick(60)
