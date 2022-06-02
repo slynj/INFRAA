@@ -161,7 +161,7 @@ def main():
     helpMFImg2 = resizeImg('resource/helpMF2.png', 1)
     helpMFImg3 = resizeImg('resource/helpMF3.png', 1)
     helpHWImg = resizeImg('resource/helpHW.png', 1)
-    helpImg = helpFAQImg
+    helpMFImg = helpMFImg1
 
     # TEXTS INIT #
     # Menu Header Texts
@@ -394,9 +394,6 @@ def main():
         if programState == 'ATTENDANCE':
             menuAttendanceText = createText('Attendance', c=NAVY)
 
-            # if os.path.exists("img/.DS_Store"):
-            #     os.remove("img/.DS_Store")
-
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
 
@@ -628,11 +625,29 @@ def main():
             # helpImg = helpFAQImg
             # helpMFPageNum = 0
 
+            underLine = createText('—', s=40, c=YELLOW)
+
             if helpState == 'FAQ':
-                mainSurface.blit(helpFAQImg, 0, 70)
-                underLine = createText('___', s=30, c=YELLOW)
-                mainSurface.blit(underLine, 0, 70)
-                helpFAQBttn = createText('___', s=30, c=YELLOW)
+                helpFAQBttn = createText('FAQ', s=30, c=YELLOW)
+                mainSurface.blit(helpFAQImg, (0, 70))
+                mainSurface.blit(underLine, (183, 120))
+
+            if helpState == 'MF':
+                helpMFPageList = [helpMFImg1, helpMFImg2, helpMFImg3]
+                helpFAQBttn = createText('Menus / Features', s=30, c=YELLOW)
+                mainSurface.blit(helpMFImg, (0, 70))
+                mainSurface.blit(underLine, (550, 120))
+                helpMFPageNum = pageControl(mainSurface, mousePos, helpMFPageNum)
+                if helpMFPageNum > 2:
+                    helpMFPageNum = 2
+                elif helpMFPageNum < 0:
+                    helpMFPageNum = 0
+                helpMFImg = helpMFPageList[helpMFPageNum]
+
+            if helpState == 'HW':
+                helpMFBttn = createText('How it Works', s=30, c=YELLOW)
+                mainSurface.blit(helpHWImg, (0, 70))
+                mainSurface.blit(underLine, (930, 120))
 
             # FAQ Menu
             if hoverObject(mousePos, helpFAQBttn, 170, 100):
@@ -640,15 +655,19 @@ def main():
                 if mouseUp:
                     helpState = 'FAQ'
             else:
-                helpFAQBttn = createText('FAQ', s=30, c=BLACK)
+                if helpState != 'FAQ':
+                    helpFAQBttn = createText('FAQ', s=30, c=BLACK)
 
             # Menus / Feautres Menu
             if hoverObject(mousePos, helpMFBttn, 450, 100):
                 helpMFBttn = createText('Menus / Features', s=30, c=YELLOW)
                 if mouseUp:
                     helpState = 'MF'
+                    helpMFImg = helpMFImg1
+                    helpMFPageNum = 0
             else:
-                helpMFBttn = createText('Menus / Features', s=30, c=BLACK)
+                if helpState != 'MF':
+                    helpMFBttn = createText('Menus / Features', s=30, c=BLACK)
 
             # How it Works Menu
             if hoverObject(mousePos, helpHW, 850, 100):
@@ -656,7 +675,8 @@ def main():
                 if mouseUp:
                     helpState = 'HW'
             else:
-                helpHW = createText('How it Works', s=30, c=BLACK)
+                if helpState != 'HW':
+                    helpHW = createText('How it Works', s=30, c=BLACK)
 
             mainSurface.blit(helpFAQBttn, (170, 100))
             mainSurface.blit(helpMFBttn, (450, 100))
