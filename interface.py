@@ -93,6 +93,17 @@ def pageControl(mainSurface, mousePos, pageNums):
     return pageNums
 
 
+# Displays the Current Page Number and the Max Page Number
+def pageNumDisplay(mainSurface, curretNum, maxNum):
+    global BLUE
+    currentPageNum = createText(str(curretNum + 1), s=15, c=BLUE)
+    MaxPageNum = createText(str(maxNum + 1), s=15, c=BLUE)
+    slash = createText('/', s=15, c=BLUE)
+    mainSurface.blit(currentPageNum, (570, 768))
+    mainSurface.blit(slash, (595, 768))
+    mainSurface.blit(MaxPageNum, (620, 768))
+
+
 # # Remove All Files that Does Not end in .jpg .png and .jpeg
 # def removeFiles():
 #     files = os.listdir("img/")
@@ -110,7 +121,7 @@ def removeDS():
 def main():
     # -----------------------------Setup------------------------------------------------- #
     # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
-    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY
+    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY, BLUE
 
     root = tk.Tk()
     root.withdraw()
@@ -340,11 +351,25 @@ def main():
                     else:
                         lastElement = 8 * logPageNum + 8
 
-                logPageNum = int(logPageNum)
-                lastElement = int(lastElement)
+                # Current Page / Max Page Display
+                pageNumDisplay(mainSurface, logPageNum, maxPage)
+
+                # currentPageNum = createText(str(logPageNum + 1), s=15, c=BLUE)
+                # MaxPageNum = createText(str(maxPage + 1), s=15, c=BLUE)
+                # slash = createText('/', s=15, c=BLUE)
+                # mainSurface.blit(currentPageNum, (570, 768))
+                # mainSurface.blit(slash, (595, 768))
+                # mainSurface.blit(MaxPageNum, (620, 768))
+
+                # file content checking
+                f = open("data/time.txt", "r")  # Open the file
+                while True:
+                    if len(f.readlines()) >= lastElement:
+                        f.close()
+                        break
 
                 # Draw the Names
-                for j in range(8 * logPageNum, lastElement):
+                for j in range(8 * int(logPageNum), int(lastElement)):
                     elementNum = j - 8 * logPageNum
 
                     name = fileList[j][0]
@@ -423,6 +448,9 @@ def main():
                         attLastElement = imgListLen
                     else:
                         attLastElement = 10 * attPageNum + 10
+
+                # Current Page / Max Page Display
+                pageNumDisplay(mainSurface, attPageNum, attMaxPage)
 
                 # file content checking
                 f = open("data/time.txt", "r")  # Open the file
@@ -552,6 +580,9 @@ def main():
                     else:
                         classLastElement = 9 * classPageNum + 9
 
+                # Current Page / Max Page Display
+                pageNumDisplay(mainSurface, classPageNum, classMaxPage)
+
                 # file content checking
                 f = open("data/time.txt", "r")  # Open the file
                 while True:
@@ -560,7 +591,7 @@ def main():
                         break
 
                 # Display the Student Images
-                for i in range(9 * classPageNum, classLastElement):
+                for i in range(9 * int(classPageNum), int(classLastElement)):
                     # Index Num of the Image in Terms of the Row of the Page
                     classElementNum = i - 9 * classPageNum
 
@@ -625,23 +656,30 @@ def main():
                 # Draw the Menu Button / Images
                 helpFAQBttn = createText('FAQ', s=30, c=YELLOW)
                 mainSurface.blit(helpFAQImg, (0, 70))
-                mainSurface.blit(underLine, (183, 120))
+                mainSurface.blit(underLine, (184, 120))
 
             # ——————— Menus / Features ——————— #
             if helpState == 'MF':
                 # Lists of Page Images
                 helpMFPageList = [helpMFImg1, helpMFImg2, helpMFImg3]
+
                 # Draw Menu Button / Images
                 helpFAQBttn = createText('Menus / Features', s=30, c=YELLOW)
                 mainSurface.blit(helpMFImg, (0, 70))
                 mainSurface.blit(underLine, (550, 120))
+
                 # Page Control by Buttons / Keyboard
                 helpMFPageNum = pageControl(mainSurface, mousePos, helpMFPageNum)
+
                 # Page Number Max / Min Limits
                 if helpMFPageNum > 2:
                     helpMFPageNum = 2
                 elif helpMFPageNum < 0:
                     helpMFPageNum = 0
+
+                # Current Page / Max Page Display
+                pageNumDisplay(mainSurface, helpMFPageNum, 2)
+
                 # Set the Image to Display According to the Page Number
                 helpMFImg = helpMFPageList[helpMFPageNum]
 
