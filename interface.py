@@ -334,18 +334,17 @@ def main():
     attPageNum = 0
     classPageNum = 0
 
-    # Reset Files
+    # INITIALIZE FILES #
+    # Delete and Create a new time.txt
     if os.path.exists('data/time.txt'):
         os.remove('data/time.txt')
-
     file = open('data/time.txt', 'x')
     file.close()
+
+    # Empty the imgStatus.txt file
     if os.path.exists('data/imgStatus.txt'):
         os.remove('data/imgStatus.txt')
-
     file = open('data/imgStatus.txt', 'x')
-    file.close()
-    file = open('data/imgStatus.txt', 'w')
     file.write('')
     file.close()
 
