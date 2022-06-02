@@ -60,9 +60,58 @@ def hoverObject(mouse, objects, objectX, objectY):
         return False
 
 
+# Page Control by Buttons / Keys
+def pageControl(mainSurface, mousePos, pageNums):
+    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY
+    if leftArrow:
+        pageNums -= 1
+        leftArrow = False
+    elif rightArrow:
+        pageNums += 1
+        rightArrow = False
+
+    leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
+    rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
+
+    if leftBttnHover:
+        leftBttnC = GRAY
+        rightBttnC = DARKGRAY
+        if mouseUp:
+            pageNums -= 1
+    elif rightBttnHover:
+        rightBttnC = GRAY
+        leftBttnC = DARKGRAY
+        if mouseUp:
+            pageNums += 1
+    else:
+        leftBttnC = DARKGRAY
+        rightBttnC = DARKGRAY
+
+    createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
+    createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+
+    return pageNums
+
+
+# # Remove All Files that Does Not end in .jpg .png and .jpeg
+# def removeFiles():
+#     files = os.listdir("img/")
+#
+#     for file in files:
+#         if not file.endswith((".jpg", ".png", "jpeg")):
+#             files.remove(file)
+
+
+def removeDS():
+    if os.path.exists("img/.DS_Store"):
+        os.remove("img/.DS_Store")
+
+
 def main():
     # -----------------------------Setup------------------------------------------------- #
     # https://stackoverflow.com/questions/1406145 (how to get rid of tk window)
+    global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY
+
     root = tk.Tk()
     root.withdraw()
     if root.wm_state() == 'withdrawn':
@@ -105,6 +154,13 @@ def main():
     mainImg3 = resizeImg('resource/mainPage3.png', 1)
     mainImg = mainImg1
     mainImgTime1 = t.time()
+    # Help Page Images
+    helpFAQImg = resizeImg('resource/helpFAQ.png', 1)
+    helpMFImg1 = resizeImg('resource/helpMF1.png', 1)
+    helpMFImg2 = resizeImg('resource/helpMF2.png', 1)
+    helpMFImg3 = resizeImg('resource/helpMF3.png', 1)
+    helpHWImg = resizeImg('resource/helpHW.png', 1)
+    helpImg = helpFAQImg
 
     # TEXTS INIT #
     # Menu Header Texts
@@ -156,6 +212,9 @@ def main():
 
         mousePos = pygame.mouse.get_pos()
 
+        # Remove .DS_Store Files That are Automatically Created
+        removeDS()
+
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
         # ——————— MENU BAR GRAPHICS ——————— #
@@ -170,7 +229,7 @@ def main():
         mainSurface.blit(menuAttendanceText, (550, 10))
         mainSurface.blit(menuClassText, (900, 10))
         # Help Button
-        createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
+        createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
 
         # Logo Hover
         # MAIN hover / click
@@ -212,19 +271,18 @@ def main():
             menuClassText = createText('Class', c=BLUE)
 
         # HELP hover / click
-        if hoverObject(mousePos, helpBttn, 1100, 10):
+        if hoverObject(mousePos, helpBttn, 1140, 16):
             helpBttnC = GRAY
-            createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
+            createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
             if mouseUp:
                 programState = 'HELP'
         else:
             helpBttnC = DARKGRAY
-            createBttn(mainSurface, helpBttn, 1100, 10, helpBttnC)
-
+            createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
 
         # ——————— MAIN MENU ——————— #
         if programState == 'MAIN':
-            # Display Diffrent Images Every 3 seconds
+            # Display Different Images Every 3 seconds
             mainImgTime2 = t.time()
             if (mainImgTime2 - mainImgTime1) > 3:
                 mainImgTime1 = mainImgTime2
@@ -253,32 +311,8 @@ def main():
                         studentNum += 1
                 f.close()  # Close the file
 
-                # Page control by up/down keys
-                if leftArrow:
-                    logPageNum -= 1
-                    leftArrow = False
-                elif rightArrow:
-                    logPageNum += 1
-                    rightArrow = False
-
-                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
-                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
-                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
-                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
-
-                if leftBttnHover:
-                    leftBttnC = GRAY
-                    rightBttnC = DARKGRAY
-                    if mouseUp:
-                        logPageNum -= 1
-                elif rightBttnHover:
-                    rightBttnC = GRAY
-                    leftBttnC = DARKGRAY
-                    if mouseUp:
-                        logPageNum += 1
-                else:
-                    leftBttnC = DARKGRAY
-                    rightBttnC = DARKGRAY
+                # Arrow Button Drawing / Arrow Keys Controlling Page Number
+                logPageNum = pageControl(mainSurface, mousePos, logPageNum)
 
                 # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if len(fileList) < 8:
@@ -355,8 +389,8 @@ def main():
         if programState == 'ATTENDANCE':
             menuAttendanceText = createText('Attendance', c=NAVY)
 
-            if os.path.exists("img/.DS_Store"):
-                os.remove("img/.DS_Store")
+            # if os.path.exists("img/.DS_Store"):
+            #     os.remove("img/.DS_Store")
 
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
@@ -364,33 +398,8 @@ def main():
             if imgListLen == 0 or not os.path.exists("data/time.txt"):
                 pass
             else:
-                # Page control by up/down keys
-                if leftArrow:
-                    attPageNum -= 1
-                    leftArrow = False
-                elif rightArrow:
-                    attPageNum += 1
-                    rightArrow = False
-
-                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
-                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
-
-                if leftBttnHover:
-                    leftBttnC = GRAY
-                    rightBttnC = DARKGRAY
-                    if mouseUp:
-                        attPageNum -= 1
-                elif rightBttnHover:
-                    rightBttnC = GRAY
-                    leftBttnC = DARKGRAY
-                    if mouseUp:
-                        attPageNum += 1
-                else:
-                    leftBttnC = DARKGRAY
-                    rightBttnC = DARKGRAY
-
-                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
-                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+                # Arrow Button Drawing / Arrow Keys Controlling Page Number
+                attPageNum = pageControl(mainSurface, mousePos, attPageNum)
 
                 # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if imgListLen < 10:
@@ -451,6 +460,7 @@ def main():
 
                     # Display Student Presence
                     studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
+
                     if fileList[i] == 'Absent':
                         studentPresenceImgC = RED
                     elif fileList[i] == 'Present':
@@ -487,8 +497,8 @@ def main():
         if programState == 'CLASS':
             menuClassText = createText('Class', c=NAVY)
 
-            if os.path.exists("img/.DS_Store"):
-                os.remove("img/.DS_Store")
+            # if os.path.exists("img/.DS_Store"):
+            #     os.remove("img/.DS_Store")
 
             # Add Button Draw & Collision Detection
             dimensionAddBttn = [100, 150, addBttn.get_width() + 100, addBttn.get_height() + 165]
@@ -516,35 +526,8 @@ def main():
             if imgListLen == 0 or not os.path.exists("data/time.txt"):
                 pass
             else:
-                # Page control by up/down keys
-                if leftArrow:
-                    classPageNum -= 1
-                    leftArrow = False
-                elif rightArrow:
-                    classPageNum += 1
-                    rightArrow = False
-
-                # Arrow Button Hover Detection
-                leftBttnHover = hoverObject(mousePos, leftBttn, 550, 720)
-                rightBttnHover = hoverObject(mousePos, rightBttn, 600, 720)
-
-                if leftBttnHover:
-                    leftBttnC = GRAY
-                    rightBttnC = DARKGRAY
-                    if mouseUp:
-                        classPageNum -= 1
-                elif rightBttnHover:
-                    rightBttnC = GRAY
-                    leftBttnC = DARKGRAY
-                    if mouseUp:
-                        classPageNum += 1
-                else:
-                    leftBttnC = DARKGRAY
-                    rightBttnC = DARKGRAY
-
-                # Page Control on Screen
-                createBttn(mainSurface, leftBttn, 550, 720, leftBttnC)
-                createBttn(mainSurface, rightBttn, 600, 720, rightBttnC)
+                # Arrow Button Drawing / Arrow Keys Controlling Page Number
+                classPageNum = pageControl(mainSurface, mousePos, classPageNum)
 
                 # Calculate What the Maximum Page Number is Depending on the Length of the File
                 if imgListLen < 10:
