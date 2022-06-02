@@ -50,7 +50,18 @@
 #   - finds default webcam
 #       -> finds a default webcam that would be used for the detector
 #       -> from camera 0, finds the camera number that suits the program
-
+# -----------------------------------------------------------------------------
+# Copy Rights & Credits:
+#   - IMG
+#       -> https://www.freepik.com/free-photo/be-focus-patient-while-teaching-new-things_13133035.htm
+#           Freepik License | @gpointstudio
+#       -> https://www.freepik.com/free-photo/red-shirt-group-people-business-conference-modern-classroom-daytime_9694506.htm
+#           Freepik License | @standret
+#       -> https://www.freepik.com/free-photo/group-young-people-sitting-conference-together_9341662.htm
+#           Freepik License | @mego-studio
+#   - FONT
+#       -> https://www.dafont.com/made-tommy.font
+#           Dafont License | @MadeType
 # -----------------------------------------------------------------------------
 from threading import Thread
 import subprocess
