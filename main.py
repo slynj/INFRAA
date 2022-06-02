@@ -19,7 +19,6 @@
 # -----------------------------------------------------------------------------
 from threading import Thread
 import subprocess
-import time
 
 # Threading to run two files in parallel
 # https://stackoverflow.com/questions/60001867

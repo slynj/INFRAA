@@ -137,6 +137,7 @@ def main():
     BLACK = (0, 0, 0)
     GRAY = (230, 232, 237)
     DARKGRAY = (213, 215, 219)
+    LIGHTGRAY = (242, 244, 249)
     GREEN = (88, 168, 112)
     RED = (194, 62, 62)
 
@@ -179,7 +180,10 @@ def main():
     leftBttnC = DARKGRAY
     # Help Button
     helpBttn = createText(' ? ', s=30, c=WHITE)
-    helpBttnC = DARKGRAY
+    helpBttnC = GRAY
+    helpFAQBttn = createText('FAQ', s=30, c=BLACK)
+    helpMFBttn = createText('Menus / Features', s=30, c=BLACK)
+    helpHW = createText('How it Works', s=30, c=BLACK)
 
     # MENU PAGES VARIABLES #
     # Front / Back Page Control
@@ -219,7 +223,7 @@ def main():
 
         # ——————— MENU BAR GRAPHICS ——————— #
         # Background
-        mainSurface.fill((242, 244, 249))
+        mainSurface.fill(LIGHTGRAY)
         # Header
         pygame.draw.rect(mainSurface, (233, 235, 240), (0, 0, surfaceSizeX, 70))
         # Logo
@@ -276,6 +280,7 @@ def main():
             createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
             if mouseUp:
                 programState = 'HELP'
+                helpState = 'FAQ'
         else:
             helpBttnC = DARKGRAY
             createBttn(mainSurface, helpBttn, 1140, 16, helpBttnC)
@@ -426,10 +431,11 @@ def main():
                 f = open("data/time.txt", "r")  # Open the file
                 while True:
                     if len(f.readlines()) >= attLastElement:
+                        f.close()
                         break
 
                 # Depending on the Page Number, change the index number (which changes the images to display)
-                for i in range(10 * attPageNum, attLastElement):
+                for i in range(10 * int(attPageNum), int(attLastElement)):
                     attElementNum = i - 10 * attPageNum
 
                     # Change X and Y of the Img Depending on their index Number
@@ -458,7 +464,6 @@ def main():
                             fileList.append(fileLists[j + 1].strip())
                     f.close()  # Close the file
 
-                    # Display Student Presence
                     studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
 
                     if fileList[i] == 'Absent':
@@ -492,6 +497,7 @@ def main():
                         studentImgModifiedX = studentImgModifiedX - (studentImgCentre - studentNameImgCentre)
                         studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
                         createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgModifiedY, studentNameImgC)
+
 
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
@@ -553,6 +559,7 @@ def main():
                 f = open("data/time.txt", "r")  # Open the file
                 while True:
                     if len(f.readlines()) >= classLastElement:
+                        f.close()
                         break
 
                 # Display the Student Images
@@ -613,13 +620,54 @@ def main():
 
         # ——————— HELP MENU ——————— #
         if programState == 'HELP':
-            pass
+            # helpFAQImg = resizeImg('resource/helpFAQ.png', 1)
+            # helpMFImg1 = resizeImg('resource/helpMF1.png', 1)
+            # helpMFImg2 = resizeImg('resource/helpMF2.png', 1)
+            # helpMFImg3 = resizeImg('resource/helpMF3.png', 1)
+            # helpHWImg = resizeImg('resource/helpHW.png', 1)
+            # helpImg = helpFAQImg
+            # helpMFPageNum = 0
+
+            if helpState == 'FAQ':
+                mainSurface.blit(helpFAQImg, 0, 70)
+                underLine = createText('___', s=30, c=YELLOW)
+                mainSurface.blit(underLine, 0, 70)
+                helpFAQBttn = createText('___', s=30, c=YELLOW)
+
+            # FAQ Menu
+            if hoverObject(mousePos, helpFAQBttn, 170, 100):
+                helpFAQBttn = createText('FAQ', s=30, c=YELLOW)
+                if mouseUp:
+                    helpState = 'FAQ'
+            else:
+                helpFAQBttn = createText('FAQ', s=30, c=BLACK)
+
+            # Menus / Feautres Menu
+            if hoverObject(mousePos, helpMFBttn, 450, 100):
+                helpMFBttn = createText('Menus / Features', s=30, c=YELLOW)
+                if mouseUp:
+                    helpState = 'MF'
+            else:
+                helpMFBttn = createText('Menus / Features', s=30, c=BLACK)
+
+            # How it Works Menu
+            if hoverObject(mousePos, helpHW, 850, 100):
+                helpHW = createText('How it Works', s=30, c=YELLOW)
+                if mouseUp:
+                    helpState = 'HW'
+            else:
+                helpHW = createText('How it Works', s=30, c=BLACK)
+
+            mainSurface.blit(helpFAQBttn, (170, 100))
+            mainSurface.blit(helpMFBttn, (450, 100))
+            mainSurface.blit(helpHW, (850, 100))
 
         pygame.display.flip()
 
         clock.tick(60)
 
     pygame.quit()
+    # detector.cv2.destroyAllWindows()
 
 
 main()
