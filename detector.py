@@ -22,13 +22,18 @@ currentFaces = []
 # Adds a new face and name
 def newFace(imgFile, faceName):
     global faceEncoding
+    # Status Shared with the Interface
+    dataFileExist('imgStatus')
+
     image = face_recognition.load_image_file(f"img/{imgFile}")
     try:
         faceEncoding = face_recognition.face_encodings(image)[0]
     # Face Not Recognized From the Image
     except IndexError as error:
         os.remove(f"img/{imgFile}")
-        #FILE CHECKING#
+        f = open('data/imgStatus.txt', 'w')
+        f.write('ImageNR')
+        f.close()
         return True
 
     knownFaceEncodings.append(faceEncoding)
