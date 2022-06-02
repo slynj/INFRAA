@@ -7,8 +7,13 @@ import os
 import time as t
 
 
-# Copies the selected image file and saves it to the 'img' directory for the detector
 def fileCheck():
+    """
+    Copies the selected image file and saves it to the 'img' directory for the detector
+
+    :return:
+        None
+    """
     dstPath = "img/"
     path = fd.askopenfilename(initialdir="/", title="Select file", filetypes=(("jpeg files", "*.jpeg"),
                                                                               ("png files", "*.png"),
@@ -19,8 +24,23 @@ def fileCheck():
         return
 
 
-# Creates a button with the rendered text given
 def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
+    """
+    Creates a button with the rendered text given
+
+    :param mainSurface: pygame.Surface
+        the surface to draw the elements
+    :param text: pygame.Surface
+        the rendered text of the button
+    :param textX: float
+        the X coordinate of the button
+    :param textY: float
+        the Y coordinate of the button
+    :param c: tuple[int, int, int] = (0, 0, 0)
+        colour of the button
+    :return:
+        None
+    """
     paddingW = 15
     paddingH = 5
     dimension = [textX, textY, text.get_width() + paddingW, text.get_height() + paddingH]
@@ -28,28 +48,72 @@ def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
     mainSurface.blit(text, (textX + paddingW/2, textY + paddingH/2))
 
 
-# Calculates what coordinate of the item's horizontal centre is
 def horizontalC(item, mainSurface):
+    """
+    Calculates what coordinate of the item's horizontal centre is
+
+    :param item: pygame.Surface
+        element to be horizontally centered
+    :param mainSurface:  pygame.Surface
+        the surface to draw the elements
+    :return: int
+        the x coordinate where the element would be centered
+    """
     return int((mainSurface.get_width() - item.get_width()) // 2)
 
 
-# Resizes Images
 def resizeImg(file, factor):
+    """
+    Resizes Images
+
+    :param file:  str
+        the name of the file to load
+    :param factor: int
+        the multiplier to reduce/increase the image size by
+    :return: pygame.Surface
+        the resized version of the image
+    """
     resizedImg = pygame.image.load(file).convert_alpha()
     resizedImg = pygame.transform.smoothscale\
         (resizedImg, (resizedImg.get_width() / factor, resizedImg.get_height() / factor))
     return resizedImg
 
 
-# Creates a Rendered Text with Given String
 def createText(t, f="tommy.otf", s=40, c=(58, 101, 139)):
+    """
+    Creates a Rendered Text with Given String
+
+    :param t: str
+        the text string to render
+    :param f: str
+        the name of the font being used to render the text
+    :param s: float
+        the size of the text
+    :param c: tuple[int, int, int] = (58, 101, 139)
+        colour of the text
+    :return: pygame.Surface
+        rendered text
+    """
     text = pygame.font.Font(f'resource/{f}', s)
     renderedText = text.render(t, True, c)
     return renderedText
 
 
-# Collision Detection for Rectangles (shapes, images, texts)
 def hoverObject(mouse, objects, objectX, objectY):
+    """
+    Collision Detection for Rectangles (shapes, images, texts)
+
+    :param mouse: tuple
+        XY coordinates of the mouse pointer
+    :param objects: pygame.Surface
+        the object to detect the collision
+    :param objectX: float
+        the X coordinate of the object
+    :param objectY: float
+        the Y coordinate of the object
+    :return: bool
+        if the mouse and the object collide or not
+    """
     paddingW = 15
     paddingH = 5
     dimension = [objectX, objectY, objects.get_width() + paddingW, objects.get_height() + paddingH]
@@ -60,8 +124,19 @@ def hoverObject(mouse, objects, objectX, objectY):
         return False
 
 
-# Page Control by Buttons / Keys
 def pageControl(mainSurface, mousePos, pageNums):
+    """
+    Page Control by Buttons / Keys
+
+    :param mainSurface: pygame.Surface
+        the surface to draw the elements
+    :param mousePos: tuple
+        XY coordinates of the mouse pointer
+    :param pageNums: int
+        current page number
+    :return: int
+        return the changed page number
+    """
     global leftArrow, rightArrow, leftBttn, rightBttn, leftBttnC, rightBttnC, mouseUp, GRAY, DARKGRAY
     # Left / Right Keyboard Detection
     if leftArrow:
@@ -95,8 +170,19 @@ def pageControl(mainSurface, mousePos, pageNums):
     return pageNums
 
 
-# Displays the Current Page Number and the Max Page Number
 def pageNumDisplay(mainSurface, curretNum, maxNum):
+    """
+    Displays the Current Page Number and the Max Page Number
+
+    :param mainSurface: mainSurface: pygame.Surface
+        the surface to draw the elements
+    :param curretNum: int
+        current page number
+    :param maxNum: int
+        maximum page number
+    :return:
+        None
+    """
     global BLUE
     currentPageNum = createText(str(curretNum + 1), s=15, c=BLUE)
     MaxPageNum = createText(str(maxNum + 1), s=15, c=BLUE)
@@ -106,15 +192,25 @@ def pageNumDisplay(mainSurface, curretNum, maxNum):
     mainSurface.blit(MaxPageNum, (620, 768))
 
 
-# Removes .DS_Store Files that are Automatically Created
 def removeDS():
+    """
+    Removes .DS_Store Files that are Automatically Created
+
+    :return:
+        None
+    """
     global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
     if os.path.exists("img/.DS_Store"):
         os.remove("img/.DS_Store")
 
 
-# If the Face was not Detected and the imgStatus.txt was created by the detector, display an Error Window
 def nonFace():
+    """
+    If the Face was not Detected and the imgStatus.txt was created by the detector, display an Error Window
+
+    :return:
+        None
+    """
     global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
     # Read the file from the Detector
     if os.path.exists("data/imgStatus.txt"):
