@@ -15,8 +15,8 @@ def fileCheck():
                                                                               ("jpg files", "*.jpg")))
     try:
         shutil.copy(path, dstPath)
-    except Exception as e:
-        print(f'Something went wrong: {e}')
+    except Exception as error:
+        return
 
 
 # Creates a button with the rendered text given
@@ -495,7 +495,6 @@ def main():
                         studentImgModifiedY = studentImgY - studentNameImg.get_height() - 10
                         createBttn(mainSurface, studentNameImg, studentImgModifiedX, studentImgModifiedY, studentNameImgC)
 
-
         # ——————— CLASS MENU ——————— #
         if programState == 'CLASS':
             menuClassText = createText('Class', c=NAVY)
@@ -519,6 +518,7 @@ def main():
             if addBttnHover:
                 addBttnC = DARKGRAY
                 if mouseUp:
+                    mouseUp = False
                     fileCheck()
             else:
                 addBttnC = GRAY
@@ -617,38 +617,41 @@ def main():
 
         # ——————— HELP MENU ——————— #
         if programState == 'HELP':
-            # helpFAQImg = resizeImg('resource/helpFAQ.png', 1)
-            # helpMFImg1 = resizeImg('resource/helpMF1.png', 1)
-            # helpMFImg2 = resizeImg('resource/helpMF2.png', 1)
-            # helpMFImg3 = resizeImg('resource/helpMF3.png', 1)
-            # helpHWImg = resizeImg('resource/helpHW.png', 1)
-            # helpImg = helpFAQImg
-            # helpMFPageNum = 0
-
+            # Menu Indication (—)
             underLine = createText('—', s=40, c=YELLOW)
 
+            # ——————— FAQ ——————— #
             if helpState == 'FAQ':
+                # Draw the Menu Button / Images
                 helpFAQBttn = createText('FAQ', s=30, c=YELLOW)
                 mainSurface.blit(helpFAQImg, (0, 70))
                 mainSurface.blit(underLine, (183, 120))
 
+            # ——————— Menus / Features ——————— #
             if helpState == 'MF':
+                # Lists of Page Images
                 helpMFPageList = [helpMFImg1, helpMFImg2, helpMFImg3]
+                # Draw Menu Button / Images
                 helpFAQBttn = createText('Menus / Features', s=30, c=YELLOW)
                 mainSurface.blit(helpMFImg, (0, 70))
                 mainSurface.blit(underLine, (550, 120))
+                # Page Control by Buttons / Keyboard
                 helpMFPageNum = pageControl(mainSurface, mousePos, helpMFPageNum)
+                # Page Number Max / Min Limits
                 if helpMFPageNum > 2:
                     helpMFPageNum = 2
                 elif helpMFPageNum < 0:
                     helpMFPageNum = 0
+                # Set the Image to Display According to the Page Number
                 helpMFImg = helpMFPageList[helpMFPageNum]
 
+            # ——————— How it Works ——————— #
             if helpState == 'HW':
                 helpMFBttn = createText('How it Works', s=30, c=YELLOW)
                 mainSurface.blit(helpHWImg, (0, 70))
                 mainSurface.blit(underLine, (930, 120))
 
+            # ——————— Menu Buttons Hover / Click Detection ——————— #
             # FAQ Menu
             if hoverObject(mousePos, helpFAQBttn, 170, 100):
                 helpFAQBttn = createText('FAQ', s=30, c=YELLOW)
@@ -678,6 +681,7 @@ def main():
                 if helpState != 'HW':
                     helpHW = createText('How it Works', s=30, c=BLACK)
 
+            # Display the Menu Buttons
             mainSurface.blit(helpFAQBttn, (170, 100))
             mainSurface.blit(helpMFBttn, (450, 100))
             mainSurface.blit(helpHW, (850, 100))
@@ -687,7 +691,6 @@ def main():
         clock.tick(60)
 
     pygame.quit()
-    # detector.cv2.destroyAllWindows()
 
 
 main()
