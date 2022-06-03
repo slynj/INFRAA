@@ -21,9 +21,9 @@ This project is an application of face detecting technology. Basing on Open CV's
 ---
 
 ## User Interface 🖥️
-<img src="/resource/readme/mainPage.png" width = 500> <img src="/resource/readme/logPage.png" width = 500>
-<img src="/resource/readme/attendancePage.png" width = 500> <img src="/resource/readme/classPage.png" width = 500>
-<img src="/resource/readme/helpPage.png" width = 500> <img src="/resource/readme/detectorWindow.png" width = 500>
+<img src="/resource/readme/mainPage.png" width = 400> <img src="/resource/readme/logPage.png" width = 400>
+<img src="/resource/readme/attendancePage.png" width = 400> <img src="/resource/readme/classPage.png" width = 400>
+<img src="/resource/readme/helpPage.png" width = 400> <img src="/resource/readme/detectorWindow.png" width = 400>
 
 ---
 
