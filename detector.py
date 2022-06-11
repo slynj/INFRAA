@@ -166,9 +166,9 @@ def webcamCheck(videoCaptures):
 # Set default webcam,
 videoCapture = cv2.VideoCapture(0)
 if webcamCheck(videoCapture):
-    videoCapture = cv2.VideoCapture(1)
+    videoCapture = cv2.VideoCapture(4)
     if webcamCheck(videoCapture):
-        videoCapture = cv2.VideoCapture(2)
+        videoCapture = cv2.VideoCapture(5)
         if webcamCheck(videoCapture):
             dataFileExist('detectorError')
 

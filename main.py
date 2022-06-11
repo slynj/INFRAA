@@ -50,6 +50,9 @@
 #   - finds default webcam
 #       -> finds a default webcam that would be used for the detector
 #       -> from camera 0, finds the camera number that suits the program
+#   - runs without camera detector for environments without a camera
+#       -> interface running without the detector
+#       -> all the features of the interface functions including adding the student
 # -----------------------------------------------------------------------------
 # Copy Rights & Credits:
 #   - IMG

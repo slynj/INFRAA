@@ -5,6 +5,20 @@ from tkinter import filedialog as fd
 import shutil
 import os
 import time as t
+from datetime import date, time, datetime, timedelta
+
+
+def dataFileExist(fileName):
+    """
+    Check if the File / Path Exists. If Not, Create it
+
+    :param fileName: str
+        name of the file to check
+    :return:
+        None
+    """
+    if not os.path.exists(f'{fileName}'):
+        open(f'{fileName}', 'x')
 
 
 def fileCheck():
@@ -22,6 +36,30 @@ def fileCheck():
         shutil.copy(path, dstPath)
     except Exception as error:
         return
+
+
+def removeFiles(fileName):
+    """
+    Remove Files if they Exist
+
+    :return:
+        None
+    """
+    if os.path.exists(fileName):
+        os.remove(fileName)
+
+
+def currentTime():
+    """
+    Return the current time in YYYY-MM-DD HH:MM:SS format
+
+    :return: datetime
+        the current time in YYYY-MM-DD HH:MM:SS format
+    """
+    today = date.today()
+    now = datetime.now()
+    currentTimes = time(now.hour, now.minute, now.second)
+    return datetime.combine(today, currentTimes)
 
 
 def createBttn(mainSurface, text, textX, textY, c=(0, 0, 0)):
@@ -192,16 +230,6 @@ def pageNumDisplay(mainSurface, curretNum, maxNum):
     mainSurface.blit(MaxPageNum, (620, 768))
 
 
-def removeFiles(fileName):
-    """
-    Remove Files if they Exist
-
-    :return:
-        None
-    """
-    if os.path.exists(fileName):
-        os.remove(fileName)
-
 
 def nonFace():
     """
@@ -352,6 +380,9 @@ def main():
     file.write('')
     file.close()
 
+    removeFiles('data/detectorError.txt')
+    removeFiles('data/noDetector.txt')
+
     # ----------------------------- Main Game Loop ---------------------------------------- #
 
     while True:
@@ -379,12 +410,10 @@ def main():
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
-        # ——————— LOG MENU ——————— #
+        # ——————— LOAD MENU ——————— #
         if programState == 'LOAD':
             # Background
             mainSurface.fill(LIGHTGRAY)
-            # # Loading Image List
-            # loadImgList = [loadImg1, loadImg2, loadImg3, loadImg4, loadImg5]
             # Update Time
             mainImgTime2 = t.time()
             # Change Img Every Second
@@ -418,6 +447,7 @@ def main():
 
                 if lines >= 3 * imgListLen:
                     removeFiles('data/detectorError.txt')
+                    dataFileExist('data/noDetector.txt')
                     programState = 'MAIN'
                     mainImg = mainImg1
                     mainImgTime1 = t.time()
@@ -673,7 +703,6 @@ def main():
                             fileList.append(fileLists[j + 1].strip())
                     f.close()  # Close the file
 
-
                     studentPresenceImg = createText(fileList[i], s=30, c=WHITE)
 
                     if fileList[i] == 'Absent':
@@ -734,11 +763,40 @@ def main():
                 addBttnC = GRAY
 
             imgList = os.listdir('img/')
-            imgListLen = len(imgList)
+            imgListLen = int(len(imgList))
 
             if imgListLen == 0 or not os.path.exists("data/time.txt"):
                 pass
             else:
+                # Check the Number of Student Written on the time.txt File
+                file = open('data/time.txt', 'r')
+                timeFileLength = int(len(file.readlines()) / 3)
+                file.close()
+
+                # Compare it with the Number of Student Images to Check if the Data Needs to be Appended
+                if os.path.exists('data/noDetector.txt') and timeFileLength != imgListLen:
+                    timeFileNameList = []
+
+                    # Append the Students' Name that is on the txt File
+                    for j in range(timeFileLength*3):
+                        file = open('data/time.txt', 'r')
+                        timeFileName = file.readlines()
+                        file.close()
+                        if j % 3 == 0:
+                            timeFileNameList.append(timeFileName[j].strip('\n'))
+
+                    # Get the Student Name from the Img File Name
+                    for i in range(imgListLen):
+                        base = os.path.basename(f'img/{imgList[i]}')
+                        imgName = os.path.splitext(base)[0]
+
+                        # If it is the New Student, Add to the txt File
+                        if imgName not in timeFileNameList:
+                            record = imgName + '\n' + 'Absent' + '\n' + str(currentTime()) + '\n'
+                            file = open('data/time.txt', 'a')
+                            file.write(record)
+                            file.close()
+
                 # Arrow Button Drawing / Arrow Keys Controlling Page Number
                 classPageNum = pageControl(mainSurface, mousePos, classPageNum)
 
