@@ -146,11 +146,31 @@ def dataFileExist(fileName):
         open(f'data/{fileName}.txt', 'x')
 
 
+def webcamCheck(videoCaptures):
+    """
+    Check if the Webcam is Functioning and Data is Being Read
+
+    :param videoCaptures
+        the data read through the webcam by the open cv library
+    :return: Bool
+        if the data is being read from the webcam
+    """
+    ret, frame = videoCaptures.read()
+
+    if frame is None:
+        return True
+    else:
+        return False
+
+
 # Set default webcam,
 videoCapture = cv2.VideoCapture(0)
-ret, frame = videoCapture.read()
-if frame is None:
+if webcamCheck(videoCapture):
     videoCapture = cv2.VideoCapture(1)
+    if webcamCheck(videoCapture):
+        videoCapture = cv2.VideoCapture(2)
+        if webcamCheck(videoCapture):
+            dataFileExist('detectorError')
 
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
@@ -254,8 +274,12 @@ while True:
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-    # Display the resulting image
+    # try:
+        # Display the resulting image
     cv2.imshow('INFRAA Detector', frame)
+    # except Exception as e:
+    #     print("JLDKJFLSKDJFLKSD")
+    #     dataFileExist('data/detectorError.txt')
 
     # Hit 'q' on the keyboard to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):

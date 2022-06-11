@@ -192,16 +192,15 @@ def pageNumDisplay(mainSurface, curretNum, maxNum):
     mainSurface.blit(MaxPageNum, (620, 768))
 
 
-def removeDS():
+def removeFiles(fileName):
     """
-    Removes .DS_Store Files that are Automatically Created
+    Remove Files if they Exist
 
     :return:
         None
     """
-    global mainSurface, errorImg, xBttn, mousePos, xBttn, RED, BLACK
-    if os.path.exists("img/.DS_Store"):
-        os.remove("img/.DS_Store")
+    if os.path.exists(fileName):
+        os.remove(fileName)
 
 
 def nonFace():
@@ -293,13 +292,20 @@ def main():
     helpMFImg = helpMFImg1
     # Error Message Images
     errorImg = resizeImg('resource/error.png', 1)
+    cameraErrorImg = resizeImg('resource/noCameraError.png', 1)
     # Loading Screen Images
     loadImg1 = resizeImg('resource/loading1.png', 1)
     loadImg2 = resizeImg('resource/loading2.png', 1)
     loadImg3 = resizeImg('resource/loading3.png', 1)
     loadImg4 = resizeImg('resource/loading4.png', 1)
     loadImg5 = resizeImg('resource/loading5.png', 1)
+    loadNC1 = resizeImg('resource/loadingNC1.png', 1)
+    loadNC2 = resizeImg('resource/loadingNC2.png', 1)
+    loadNC3 = resizeImg('resource/loadingNC3.png', 1)
+    loadNC4 = resizeImg('resource/loadingNC4.png', 1)
+    loadNC5 = resizeImg('resource/loadingNC5.png', 1)
     imgNum = 0
+    loadImgList = [loadImg1, loadImg2, loadImg3, loadImg4, loadImg5]
 
     # TEXTS INIT #
     # Menu Header Texts
@@ -336,14 +342,12 @@ def main():
 
     # INITIALIZE FILES #
     # Delete and Create a new time.txt
-    if os.path.exists('data/time.txt'):
-        os.remove('data/time.txt')
+    removeFiles('data/time.txt')
     file = open('data/time.txt', 'x')
     file.close()
 
     # Empty the imgStatus.txt file
-    if os.path.exists('data/imgStatus.txt'):
-        os.remove('data/imgStatus.txt')
+    removeFiles('data/imgStatus.txt')
     file = open('data/imgStatus.txt', 'x')
     file.write('')
     file.close()
@@ -371,7 +375,7 @@ def main():
         mousePos = pygame.mouse.get_pos()
 
         # Remove .DS_Store Files That are Automatically Created
-        removeDS()
+        removeFiles("img/.DS_Store")
 
         # ----------------------------- Game Logic / Drawing -------------------------------- #
 
@@ -379,8 +383,8 @@ def main():
         if programState == 'LOAD':
             # Background
             mainSurface.fill(LIGHTGRAY)
-            # Loading Image List
-            loadImgList = [loadImg1, loadImg2, loadImg3, loadImg4, loadImg5]
+            # # Loading Image List
+            # loadImgList = [loadImg1, loadImg2, loadImg3, loadImg4, loadImg5]
             # Update Time
             mainImgTime2 = t.time()
             # Change Img Every Second
@@ -389,10 +393,23 @@ def main():
                 mainImgTime1 = mainImgTime2
             if imgNum > 4:
                 imgNum = 0
+
             mainSurface.blit(loadImgList[imgNum], (0, 0))
 
             imgList = os.listdir('img/')
             imgListLen = len(imgList)
+
+            if os.path.exists('data/detectorError.txt'):
+                loadImgList = [loadNC1, loadNC2, loadNC3, loadNC4, loadNC5]
+                mainSurface.blit(cameraErrorImg, (horizontalC(cameraErrorImg, mainSurface), 200))
+                mainSurface.blit(xBttn, (950, 205))
+                # Closing Button
+                if hoverObject(mousePos, xBttn, 950, 205):
+                    xBttn = createText('x', s=50, c=RED)
+                    if mouseUp:
+                        removeFiles('data/detectorError.txt')
+                else:
+                    xBttn = createText('x', s=50, c=BLACK)
 
             # Wait until the detector finishes writing on the file
             if os.path.exists('data/time.txt'):
@@ -400,6 +417,7 @@ def main():
                 lines = len(f.readlines())
 
                 if lines >= 3 * imgListLen:
+                    removeFiles('data/detectorError.txt')
                     programState = 'MAIN'
                     mainImg = mainImg1
                     mainImgTime1 = t.time()
