@@ -71,8 +71,8 @@ import subprocess
 
 # Threading to run two files in parallel
 # https://stackoverflow.com/questions/60001867
-t1 = Thread(target=subprocess.call, args=(["python3", "detector.py"],))
-t2 = Thread(target=subprocess.call, args=(["python3", "interface.py"],))
+t1 = Thread(target=subprocess.call, args=(["python", "detector.py"],))
+t2 = Thread(target=subprocess.call, args=(["python", "interface.py"],))
 
 t1.start()
 t2.start()
