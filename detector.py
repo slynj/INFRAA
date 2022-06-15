@@ -17,6 +17,7 @@ faceEncodings = []
 faceNames = []
 initial = True
 currentFaces = []
+webcamNum = 0
 
 
 def newFace(imgFile, faceName):
@@ -102,37 +103,6 @@ def currentTime():
     return datetime.combine(today, currentTimes)
 
 
-def programInit():
-    """
-    Program Files and Lists Initialize
-
-    :return:
-        None
-    """
-    global initial, currentFaces
-
-    if initial:
-        initial = False
-
-        # Collect Data and append it to a list
-        for i in range(len(knownFaceNames)):
-            currentFaces.append([knownFaceNames[i]])
-            currentFaces[i].append('Absent')
-            currentFaces[i].append(currentTime())
-
-        # Write Data on the FIle
-        for j in range(len(currentFaces)):
-            nameStored = currentFaces[j][0]
-            presenceStored = currentFaces[j][1]
-            timeStored = currentFaces[j][2]
-
-            record = nameStored + '\n' + presenceStored + '\n' + str(timeStored) + '\n'
-
-            file = open('data/time.txt', 'a')
-            file.write(record)
-            file.close()
-
-
 def dataFileExist(fileName):
     """
     Check if the File / Path Exists. If Not, Create it
@@ -164,18 +134,20 @@ def webcamCheck(videoCaptures):
 
 
 # Set default webcam,
-videoCapture = cv2.VideoCapture(0)
-if webcamCheck(videoCapture):
-    videoCapture = cv2.VideoCapture(1)
+for i in range(3):
+    videoCapture = cv2.VideoCapture(webcamNum)
     if webcamCheck(videoCapture):
-        videoCapture = cv2.VideoCapture(2)
-        if webcamCheck(videoCapture):
+        if webcamNum == 2:
             dataFileExist('detectorError')
+            break
+        else:
+            webcamNum += 1
+    else:
+        break
 
 # https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 while True:
 
-    programInit()
     addFace()
 
     # Grab a single frame of video
