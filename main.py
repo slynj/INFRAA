@@ -8,12 +8,8 @@
 #
 # Author:      Lyn Jeong
 # Created:     05-May-2022
-# Updated:     02-Jun-2022
+# Updated:     29-Aug-2024
 # -----------------------------------------------------------------------------
-# I think this project deserves a level 4+ because it demonstrates all of the level
-# 4 criteria along with many extra features and implementations to improve the program.
-# INFRAA also implements a real world problem / situation and applies the knowledge learned
-# in the course to connect it back to my own interests and ideas.
 #
 # Features Added:
 #   - facial detection
